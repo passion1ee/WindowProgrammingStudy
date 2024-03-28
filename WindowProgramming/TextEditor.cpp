@@ -68,7 +68,7 @@ namespace ys
 					--curLine;
 					maxLine = false;
 					SIZE size;  GetTextExtentPoint32(hDC, text.at(curLine).c_str(), text.at(curLine).size(), &size);
-					SetCaretPos(0, 20 * curLine);
+					SetCaretPos(size.cx, 20 * curLine);
 				}
 			}
 			else
