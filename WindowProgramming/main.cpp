@@ -1177,9 +1177,8 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
 		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != VK_ESCAPE)
 		{
-			buff = wParam;
 			hDC = GetDC(hWnd);
-			ys::TextEditor::Add(hDC, buff);
+			ys::TextEditor::Add(hDC, wParam);
 			ReleaseDC(hWnd, hDC);
 		}
 		InvalidateRect(hWnd, NULL, TRUE);

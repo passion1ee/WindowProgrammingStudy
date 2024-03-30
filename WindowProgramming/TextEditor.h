@@ -11,11 +11,13 @@ namespace ys
 		static void Init();
 		static void Run();
 		static void Update();
-		static void Add(HDC hDC, std::wstring buff);
+		static void Add(HDC hDC, WPARAM buff);
 		static void Render(HDC hDC);
 
 	private:
 		static void enter();
+
+
 	private:
 		static std::vector<std::wstring> note;
 		static short curLine;

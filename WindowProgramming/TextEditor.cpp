@@ -1,6 +1,7 @@
 #include "TextEditor.h"
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #include <tchar.h>
+#include <cwctype>
 
 namespace ys
 {
@@ -77,10 +78,21 @@ namespace ys
 			}
 		}
 
+
+
+
+
 		if (ys::InputManager::getKeyDown(VK_RETURN))
 		{
+			auto prevIndex = nextCharIndex;
 			enter();
+			if (prevIndex < note.at(curLine - 1).size())
+			{
+				note.at(curLine).append(note.at(curLine - 1).begin() + prevIndex, note.at(curLine - 1).end());
+				note.at(curLine - 1).erase(note.at(curLine - 1).begin() + prevIndex, note.at(curLine - 1).end());
+			}
 		}
+
 		if (ys::InputManager::getKeyDown(VK_TAB))
 		{
 			if (note.at(curLine).size() < kLineMaxSize - 4)
@@ -90,14 +102,19 @@ namespace ys
 			}
 		}
 
+
+
+
+
 		if (ys::InputManager::getKeyDown(VK_BACK))
 		{
-			if (note.at(curLine).empty())
+			if (note.at(curLine).empty() || nextCharIndex == 0)
 			{
 				if (note.size() != 1)
 				{
+					nextCharIndex = note.at(curLine - 1).size();
+					note.at(curLine - 1).append(note.at(curLine).c_str());
 					note.erase(note.begin() + curLine--);
-					nextCharIndex = note.at(curLine).size();
 				}
 			}
 			else if (nextCharIndex > 0)
@@ -106,17 +123,17 @@ namespace ys
 			}
 		}
 
-		if (ys::InputManager::getKeyDown(VK_DELETE))//아직 구현해야함
+		if (ys::InputManager::getKeyDown(VK_DELETE))
 		{
-			if (curLine != note.size() - 1)
+			if (nextCharIndex == note.at(curLine).size())//마지막문자 일때
 			{
-				if (nextCharIndex == note.at(curLine).size())
+				if (curLine != note.size() - 1)// 마지막줄이 아닐때
 				{
 					note.at(curLine).append(note.at(curLine + 1).c_str());
 					note.erase(note.begin() + curLine + 1);
 				}
 			}
-			else
+			else//마지막문자가 아닐때
 			{
 				note.at(curLine).erase(note.at(curLine).begin() + nextCharIndex);
 			}
@@ -130,6 +147,15 @@ namespace ys
 			nextCharIndex = 0;
 		}
 
+
+
+
+
+		if (ys::InputManager::getKeyDown(VK_HOME))
+		{
+			nextCharIndex = 0;
+		}
+
 		if (ys::InputManager::getKeyDown(VK_END))
 		{
 			if (note.at(curLine).size() >= kLineMaxSize)
@@ -137,30 +163,55 @@ namespace ys
 			else
 				nextCharIndex = note.at(curLine).size();
 		}
-	}
 
-	void TextEditor::Add(HDC hDC, std::wstring buff)
-	{
-		if (note.at(curLine).size() < kLineMaxSize)
+		if (ys::InputManager::getKeyDown(VK_F1))
 		{
-			if (nextCharIndex == 0)
-			{
-				note.at(curLine).insert(nextCharIndex, buff);
-				//note.at(curLine) = buff + note.at(curLine).substr(nextCharIndex, note.at(curLine).size() - 1);
-			}
-			else if (nextCharIndex == note.at(curLine).size() /*&& nextCharIndex == 1*/)
-			{
-				note.at(curLine).insert(nextCharIndex, buff);
-				//note.at(curLine) = note.at(curLine).substr(0, nextCharIndex) + buff;
-			}
-			else
-			{
-				note.at(curLine).insert(nextCharIndex, buff);
-				//note.at(curLine) = note.at(curLine).substr(0, nextCharIndex - 1) + buff + note.at(curLine).substr(nextCharIndex, note.at(curLine).size() - 1);
-			}
-			++nextCharIndex;
+			isUpper = isUpper ? false : true;
+		}
+
+		if (ys::InputManager::getKeyDown(VK_INSERT))
+		{
+			isInsert = isInsert ? false : true;
 		}
 	}
+
+
+
+	void TextEditor::Add(HDC hDC, WPARAM buff)
+	{
+		std::wstring ch; 
+
+		if (isUpper)
+			ch = std::towupper(buff);
+		else
+			ch = std::towlower(buff);
+
+		if (isInsert)
+		{
+			if (note.at(curLine).size() < kLineMaxSize)//현재 길이가 최대크기보다 작을때
+			{
+				note.at(curLine).insert(nextCharIndex, ch);
+			}
+		}
+		else
+		{
+			if (nextCharIndex == note.at(curLine).size())//마지막문자 일때
+			{
+				if (note.at(curLine).size() < kLineMaxSize)//현재 길이가 최대크기보다 작을때
+				{
+					note.at(curLine).insert(nextCharIndex, ch);
+				}
+			}
+			else//마지막문자가 아닐때
+			{
+				note.at(curLine).erase(note.at(curLine).begin() + nextCharIndex);
+				note.at(curLine).insert(nextCharIndex, ch);
+			}
+		}
+		++nextCharIndex;
+	}
+
+
 
 	void TextEditor::Render(HDC hDC)
 	{
