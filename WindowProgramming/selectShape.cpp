@@ -2,6 +2,8 @@
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #include <random>
 
+constexpr float resize = 0.2;
+
 namespace ys
 {
 	std::vector<ys::Shape> selectShape::shapes;
@@ -22,11 +24,14 @@ namespace ys
 		screenHeight = height;
 		mainRect = RECT(static_cast<LONG>(screenWidth / 3.0), static_cast<LONG>(screenHeight / 3.0), static_cast<LONG>(screenWidth * 2.0 / 3.0), static_cast<LONG>(screenHeight * 2.0 / 3.0));  //(1, 1), (2, 2)
 		
+		auto mainWidth = mainRect.right - mainRect.left;
+		auto mainHeight = mainRect.bottom - mainRect.top;
+
 		selectRect.clear();
-		selectRect.push_back(RECT(mainRect.left, 0, mainRect.right, mainRect.top));  //(1, 0), (2, 1)
-		selectRect.push_back(RECT(0, mainRect.top, mainRect.left, mainRect.bottom));  //(0, 1), (1, 2)
-		selectRect.push_back(RECT(mainRect.left, mainRect.bottom, mainRect.right, screenHeight));  //(1, 2), (2, 3)
-		selectRect.push_back(RECT(mainRect.right, mainRect.top, screenWidth, mainRect.bottom));  //(2, 1), (3, 2)
+		selectRect.push_back(RECT(mainRect.left + mainWidth * resize, 0, mainRect.right - mainWidth * resize, mainRect.top - mainHeight * resize));  //(1, 0), (2, 1)
+		selectRect.push_back(RECT(0, mainRect.top + mainHeight * resize, mainRect.left - mainWidth * resize, mainRect.bottom - mainHeight * resize));  //(0, 1), (1, 2)
+		selectRect.push_back(RECT(mainRect.left + mainWidth * resize, mainRect.bottom + mainHeight * resize, mainRect.right - mainWidth * resize, screenHeight - mainHeight * resize));  //(1, 2), (2, 3)
+		selectRect.push_back(RECT(mainRect.right + mainWidth * resize, mainRect.top + mainHeight * resize, screenWidth - mainHeight * resize, mainRect.bottom - mainHeight * resize));  //(2, 1), (3, 2)
 	}
 
 	void selectShape::render(HDC hDC)
@@ -131,9 +136,9 @@ namespace ys
 		switch (shape.shape) {
 		case ys::Shapes::kTriangle:
 		{
-			POINT vertex[3] = { {rect.left + width / 2.0, rect.top + height / 10.0},
-								{rect.left + width / 10.0, rect.top + height * 9.0 / 10.0},
-								{rect.left + width * 9.0 / 10.0, rect.top + height * 9.0 / 10.0}
+			POINT vertex[3] = { {rect.left + width / 2.0, rect.top},
+								{rect.left, rect.bottom},
+								{rect.right, rect.bottom}
 			};
 
 			Polygon(hDC, vertex, 3);
@@ -141,11 +146,11 @@ namespace ys
 		}
 		case ys::Shapes::kHourglass:
 		{
-			POINT vertex[5] = {	{rect.left + width / 10.0, rect.top + height / 10.0},
-								{rect.left + width * 9.0 / 10.0, rect.top + height / 10.0},
+			POINT vertex[5] = {	{rect.left, rect.top},
+								{rect.right, rect.top},
 								{rect.left + width / 2.0, rect.top + height * 5.0 / 10.0},
-								{rect.left + width / 10.0, rect.top + height * 9.0 / 10.0},
-								{rect.left + width * 9.0 / 10.0, rect.top + height * 9.0 / 10.0}
+								{rect.left, rect.bottom},
+								{rect.right, rect.bottom}
 			};
 
 			Polygon(hDC, vertex, 5);
@@ -153,11 +158,11 @@ namespace ys
 		}
 		case ys::Shapes::kPentagon:
 		{
-			POINT vertex[5] = {	{rect.left + width / 2.0, rect.top + height / 10.0},
-								{rect.left + width / 10.0, rect.top + height * 4.5 / 10.0},
-								{rect.left + width * 3.0 / 10.0, rect.top + height * 9.0 / 10.0},
-								{rect.left + width * 7.0 / 10.0, rect.top + height * 9.0 / 10.0},
-								{rect.left + width * 9.0 / 10.0, rect.top + height * 4.5 / 10.0},
+			POINT vertex[5] = {	{rect.left + width / 2.0, rect.top},
+								{rect.left, rect.top + height * 4.5 / 10.0},
+								{rect.left + width * 3.0 / 10.0, rect.bottom},
+								{rect.left + width * 7.0 / 10.0, rect.bottom},
+								{rect.right, rect.top + height * 4.5 / 10.0},
 			};
 
 			Polygon(hDC, vertex, 5);
@@ -165,8 +170,8 @@ namespace ys
 		}
 		case ys::Shapes::kPie:
 		{
-			Pie(hDC, rect.left + width / 10.0, rect.top + height / 10.0, rect.left + width * 9.0 / 10.0, rect.top + height * 9.0 / 10.0,
-				rect.left + width / 2.0, rect.top + height / 10.0, rect.left + width * 9.0 / 10.0, rect.top + height / 2.0);
+			Pie(hDC, rect.left, rect.top, rect.right, rect.bottom,
+				rect.left + width / 2.0, rect.top, rect.right, rect.top + height / 2.0);
 			break;
 		}
 		default:

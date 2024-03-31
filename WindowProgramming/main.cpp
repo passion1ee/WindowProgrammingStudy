@@ -1236,7 +1236,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
-RECT windowRect{ 0, 0, 1000 , 1000 };
+RECT windowRect{ 0, 0, 120 , 120 };
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
