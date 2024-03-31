@@ -6,9 +6,11 @@
 namespace ys
 {
 	constexpr BYTE kLineMaxSize = 80;
-	constexpr BYTE kMaxLine = 10;
+	constexpr BYTE kMaxLine = 35;
 	constexpr BYTE kLineHeight = 20;
 	std::vector<std::wstring> TextEditor::note;
+	std::vector<std::wstring> TextEditor::pdownPrevNote;
+	std::vector<std::wstring> TextEditor::pupPrevNote;
 	short TextEditor::curLine;
 	size_t TextEditor::nextCharIndex;
 	bool TextEditor::isInsert;
@@ -81,7 +83,13 @@ namespace ys
 
 		if (ys::InputManager::getKeyDown(VK_RETURN))
 		{
-			enter(nextCharIndex);
+			if (curLine < kMaxLine)
+				enter(nextCharIndex);
+			else
+			{
+				curLine = 0;
+				nextCharIndex = 0;
+			}
 		}
 		if (ys::InputManager::getKeyDown(VK_TAB))
 		{
@@ -171,37 +179,200 @@ namespace ys
 			isInsert = isInsert ? false : true;
 		}
 
+
+		if (ys::InputManager::getKeyDown(VK_F2))
+		{
+			bool isPrevPrint{ false };
+			for (int i = 0; i < note.size(); ++i)
+			{
+				auto tmp = note.at(i).find(L"____");
+				if (tmp != std::string::npos)
+				{
+					note.at(i).erase(tmp, 4);
+					isPrevPrint = true;
+				}
+			}
+
+			if (isPrevPrint)
+			{
+				nextCharIndex = nextCharIndex > 4 ? nextCharIndex - 4 : 0;
+			}
+			else
+			{
+				for (int index = 0; index < note.size(); ++index)
+				{
+					note.at(index).insert(0, L"____");
+				}
+				nextCharIndex += 4;
+			}
+		}
+		if (ys::InputManager::getKeyDown(VK_F3))
+		{
+			nextCharIndex = 0;
+			if(note.size() <= kMaxLine)
+			{
+				++curLine;
+				note.insert(note.begin(), L"");
+			}
+			else
+			{
+				note.pop_back();
+				note.insert(note.begin(), L"");
+			}
+		}
+		if (ys::InputManager::getKeyDown(VK_F4))
+		{
+			std::reverse(note.begin(), note.end());
+			std::reverse(pdownPrevNote.begin(), pdownPrevNote.end());
+			std::reverse(pupPrevNote.begin(), pupPrevNote.end());
+			curLine = note.size() - 1 - curLine;
+		}
+		if (ys::InputManager::getKeyDown(VK_NEXT))
+		{
+			if (pupPrevNote.empty())
+			{
+				if (pdownPrevNote.empty())
+				{
+					pdownPrevNote = note;
+					for (auto& line : note)
+					{
+						std::wstring word;
+						std::wstring result;
+						bool inWord{ false };
+
+						for (auto& ch : line)
+						{
+							if (iswspace(ch))
+							{
+								if (inWord)
+								{
+									result += L'(' + word + L')';
+									word.clear();
+									inWord = false;
+								}
+							}
+							else
+							{
+								word += towupper(ch);
+								inWord = true;
+							}
+						}
+
+						// 마지막 단어 처리
+						if (!word.empty())
+							result += L'(' + word + L')';
+
+						line = result;
+					}
+				}
+				else
+				{
+					note = pdownPrevNote;
+					pdownPrevNote.clear();
+				}
+			}
+			
+		}
+		if (ys::InputManager::getKeyDown(VK_PRIOR))
+		{
+			if (pdownPrevNote.empty())
+			{
+				if (pupPrevNote.empty())
+				{
+					pupPrevNote = note;
+					for (auto& line : note)
+					{
+						line.erase(std::remove_if(line.begin(), line.end(), isspace), line.end());
+					}
+				}
+				else
+				{
+					note = pupPrevNote;
+					pupPrevNote.clear();
+				}
+			}
+		}
+		if (ys::InputManager::getKeyDown(VK_ADD))
+		{
+			if (pdownPrevNote.empty() && pupPrevNote.empty())
+			{
+				for (auto& line : note)
+				{
+					for (auto& ch : line)
+					{
+						if (iswalpha(ch))
+						{
+							if (ch == L'z') ch = L'a';
+							else if (ch == L'Z') ch = L'A';
+							else ++ch;
+						}
+						else if (iswdigit(ch))
+						{
+							if (ch == L'9') ch = L'0';
+							else ++ch;
+						}
+					}
+				}
+			}
+		}
+		if (ys::InputManager::getKeyDown(VK_SUBTRACT))
+		{
+			if (pdownPrevNote.empty() && pupPrevNote.empty())
+			{
+				for (auto& line : note)
+				{
+					for (auto& ch : line)
+					{
+						if (iswalpha(ch))
+						{
+							if (ch == L'a') ch = L'z';
+							else if (ch == L'A') ch = L'Z';
+							else --ch;
+						}
+						else if (iswdigit(ch))
+						{
+							if (ch == L'0') ch = L'9';
+							else --ch;
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 
 
 	void TextEditor::Add(HDC hDC, WPARAM buff)
 	{
-		std::wstring ch; 
-
-		if (isUpper)
-			ch = std::towupper(buff);
-		else
-			ch = std::towlower(buff);
-
-
-		if (isInsert || nextCharIndex == note.at(curLine).size())
+		if(pdownPrevNote.empty() && pupPrevNote.empty())
 		{
-			if (note.at(curLine).size() < kLineMaxSize)
+			std::wstring ch;
+
+			if (isUpper)
+				ch = std::towupper(buff);
+			else
+				ch = std::towlower(buff);
+
+
+			if (isInsert || nextCharIndex == note.at(curLine).size())
 			{
+				if (note.at(curLine).size() < kLineMaxSize)
+				{
+					note.at(curLine).insert(nextCharIndex, ch);
+					++nextCharIndex;
+				}
+				else
+				{
+					enter(nextCharIndex);
+				}
+			}
+			else //!isInsert && 마지막문자가 아닐때
+			{
+				note.at(curLine).erase(note.at(curLine).begin() + nextCharIndex);
 				note.at(curLine).insert(nextCharIndex, ch);
 				++nextCharIndex;
 			}
-			else
-			{
-				enter(nextCharIndex);
-			}
-		}
-		else //!isInsert && 마지막문자가 아닐때
-		{
-			note.at(curLine).erase(note.at(curLine).begin() + nextCharIndex);
-			note.at(curLine).insert(nextCharIndex, ch);
-			++nextCharIndex;
 		}
 	}
 

@@ -15,6 +15,8 @@ namespace ys
 		static void Render(HDC hDC);
 
 	private:
+		static std::vector<std::wstring> pdownPrevNote;
+		static std::vector<std::wstring> pupPrevNote;
 		static void enter(const size_t);
 
 

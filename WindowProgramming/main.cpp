@@ -1175,7 +1175,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CHAR:
 	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
-		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != VK_ESCAPE)
+		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != L'+' && wParam != L'-' && wParam != VK_ESCAPE)
 		{
 			hDC = GetDC(hWnd);
 			ys::TextEditor::Add(hDC, wParam);
