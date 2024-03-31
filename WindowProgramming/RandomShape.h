@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PRACTICE__2_6
 #include <windows.h>
 #include <vector>
 //#include "../../WinProgramming/MyEngine_source/ysInputManager.h"
@@ -34,3 +35,4 @@ namespace ys
 		static std::vector<Section> sections;
 	};
 }
+#endif PRACTICE__2_6

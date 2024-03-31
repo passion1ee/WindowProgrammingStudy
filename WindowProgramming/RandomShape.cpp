@@ -1,3 +1,4 @@
+#ifdef PRACTICE__2_6
 #include "RandomShape.h"
 
 #include <random>
@@ -46,7 +47,7 @@ namespace ys
 		SetBkColor(hDC, RGB(color(re), color(re), color(re)));
 		SetTextColor(hDC, RGB(color(re), color(re), color(re)));
 		renderShape(hDC);
-		//DrawText(hDC, line.c_str(), line.size(), &sections[i].rect, DT_CENTER | DT_WORDBREAK | DT_EDITCONTROL);
+		//DrawText(hDC, line.c_str(), line.size(), &shapes[i].rect, DT_CENTER | DT_WORDBREAK | DT_EDITCONTROL);
 
 	}
 
@@ -226,6 +227,8 @@ namespace ys
 				break;
 			}
 		}
-		//DrawText(hDC, line.c_str(), line.size(), &sections[i].rect, DT_CENTER | DT_WORDBREAK | DT_EDITCONTROL);
+		//DrawText(hDC, line.c_str(), line.size(), &shapes[i].rect, DT_CENTER | DT_WORDBREAK | DT_EDITCONTROL);
 	}
 }
+
+#endif PRACTICE__2_6
