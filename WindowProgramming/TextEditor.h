@@ -9,17 +9,22 @@ namespace ys
 	{
 	public:
 		static void Init();
-		static void Run(HWND hWnd);
-		static void Update(HWND hWnd);
-		static void Add(HDC hDC, std::wstring buff);
+		static void Run();
+		static void Update();
+		static void Add(HDC hDC, WPARAM buff);
 		static void Render(HDC hDC);
 
 	private:
-		static std::vector<std::wstring> prevText;
-		static std::vector<std::wstring> curText;
-		static std::vector<std::wstring> text;
+		static std::vector<std::wstring> pdownPrevNote;
+		static std::vector<std::wstring> pupPrevNote;
+		static void enter(const size_t);
+
+
+	private:
+		static std::vector<std::wstring> note;
 		static short curLine;
-		static bool maxLine;
+		static size_t nextCharIndex;
+		static bool isInsert;
+		static bool isUpper;
 	};
 }
-

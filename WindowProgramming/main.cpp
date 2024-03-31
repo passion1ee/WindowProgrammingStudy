@@ -9,7 +9,7 @@
 #define PRACTICE__2
 //#define PRACTICE__2_1
 //#define PRACTICE__2_2
- 
+
 //#define PRACTICE__2_3
 //#define PRACTICE__2_4
 //#define PRACTICE__2_5
@@ -1096,7 +1096,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	MSG msg;
 	g_hInst = hInstance;
 
-	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL, FALSE);
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -1113,7 +1113,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	::RegisterClassEx(&WndClass);
 
-	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
+	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,
 		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
 
 	ys::InputManager::Init();
@@ -1122,15 +1122,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	::ShowWindow(hWnd, nShowCmd);
 	::UpdateWindow(hWnd);
+
 	while (true) {
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {//event
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 			if (msg.message == WM_QUIT)
+			{
 				break;
+			}
 		}
 		//game logic update
-		ys::TextEditor::Run(hWnd);
+		ys::TextEditor::Run();
 	}
 	return msg.wParam;
 }
@@ -1172,11 +1175,10 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CHAR:
 	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
-		if (wParam != VK_BACK && wParam != VK_RETURN)
+		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != L'+' && wParam != L'-' && wParam != VK_ESCAPE)
 		{
-			buff = wParam;
 			hDC = GetDC(hWnd);
-			ys::TextEditor::Add(hDC, buff);
+			ys::TextEditor::Add(hDC, wParam);
 			ReleaseDC(hWnd, hDC);
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
@@ -1188,6 +1190,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		ys::InputManager::setKeyState(wParam,
 			(keyflags & KF_REPEAT) == KF_REPEAT,
 			(keyflags & KF_UP) == KF_UP);
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	}
 	case WM_KEYUP:
@@ -1200,7 +1203,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_PAINT:
 	{
-		Beep(199, 100);
 		PAINTSTRUCT ps;
 		hDC = BeginPaint(hWnd, &ps);
 
