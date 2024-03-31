@@ -1,23 +1,20 @@
 #pragma once
-#ifdef PRACTICE__2_6
 #include <windows.h>
 #include <vector>
 //#include "../../WinProgramming/MyEngine_source/ysInputManager.h"
+enum class Shape : BYTE
+{
+	kX, kSnake, kDiamond, kButterfly, kTriangle2, kRect3, kCount
+};
+struct Section
+{
+	RECT rect;
+	Shape shape;
+
+	Section() = default;
+};
 namespace ys
 {
-	enum class Shape : BYTE
-	{
-		kX, kSnake, kDiamond, kButterfly, kTriangle2, kRect3, kCount
-	};
-
-	struct Section
-	{
-		RECT rect;
-		Shape shape;
-
-		Section() = default;
-	};
-
 	class RandomShape
 	{
 	public:
@@ -35,4 +32,3 @@ namespace ys
 		static std::vector<Section> sections;
 	};
 }
-#endif PRACTICE__2_6

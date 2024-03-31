@@ -3,8 +3,6 @@
 #include <vector>
 namespace ys
 {
-
-
 	enum class Shapes : BYTE
 	{
 		kTriangle, kHourglass, kPentagon, kPie

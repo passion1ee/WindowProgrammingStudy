@@ -1,4 +1,4 @@
-#ifdef PRACTICE__2_6
+
 #include "RandomShape.h"
 
 #include <random>
@@ -6,13 +6,14 @@
 
 namespace ys
 {
-	std::vector<ys::Section> RandomShape::sections;
+	std::vector<Section> RandomShape::sections;
 	int RandomShape::screenWidth;
 	int RandomShape::screenHeight;
-	std::random_device rd;
-	std::mt19937 re(rd());
+
+	std::random_device RSrd;
+	std::mt19937 RSre(RSrd());
 	std::uniform_int_distribution<int> randShape(0, (int)Shape::kCount - 1);
-	std::uniform_int_distribution<> color(0, 255);
+	std::uniform_int_distribution<> symbolColor(0, 255);
 	std::uniform_int_distribution<> randSymbol(0, 5);
 
 	void RandomShape::setScreen(int width, int height)
@@ -34,18 +35,18 @@ namespace ys
 				sections[(i * col) + j].rect.right = screenWidth / col * (j + 1);
 				sections[(i * col) + j].rect.bottom = screenHeight / row * (i + 1);
 
-				sections[(i * col) + j].shape = static_cast<Shape>(randShape(re));
+				sections[(i * col) + j].shape = static_cast<Shape>(randShape(RSre));
 			}
 	}
 
 	void RandomShape::render(HDC hDC)
 	{
-		SetBkColor(hDC, RGB(color(re), color(re), color(re)));
-		SetTextColor(hDC, RGB(color(re), color(re), color(re)));
+		SetBkColor(hDC, RGB(symbolColor(RSre), symbolColor(RSre), symbolColor(RSre)));
+		SetTextColor(hDC, RGB(symbolColor(RSre), symbolColor(RSre), symbolColor(RSre)));
 		renderFrame(hDC);
 
-		SetBkColor(hDC, RGB(color(re), color(re), color(re)));
-		SetTextColor(hDC, RGB(color(re), color(re), color(re)));
+		SetBkColor(hDC, RGB(symbolColor(RSre), symbolColor(RSre), symbolColor(RSre)));
+		SetTextColor(hDC, RGB(symbolColor(RSre), symbolColor(RSre), symbolColor(RSre)));
 		renderShape(hDC);
 		//DrawText(hDC, line.c_str(), line.size(), &shapes[i].rect, DT_CENTER | DT_WORDBREAK | DT_EDITCONTROL);
 
@@ -78,12 +79,12 @@ namespace ys
 			auto& cur = sections[index].rect;
 			auto width = cur.right - cur.left;
 			auto height = cur.bottom - cur.top;
-			auto selectPixel = &pixel[randSymbol(re)];
+			auto selectPixel = &pixel[randSymbol(RSre)];
 			SIZE pieceStar; GetTextExtentPoint32(hDC, selectPixel, 1, &pieceStar);
 			//pieceStar.cx = 1;
 			//pieceStar.cy = 1;
 			switch (sections[index].shape) {
-			case ys::Shape::kX:
+			case Shape::kX:
 			{
 				auto slope = (double)(cur.bottom - cur.top) / (cur.right - cur.left);
 				for (double x = cur.left + pieceStar.cx * 4; x < cur.right - pieceStar.cx * 4; x += pieceStar.cx)
@@ -94,7 +95,7 @@ namespace ys
 				}
 				break;
 			}
-			case ys::Shape::kSnake:
+			case Shape::kSnake:
 			{
 				
 				for (double x = cur.left + width * 2 / 10; x < cur.left + width * 8 / 10; x += pieceStar.cx)
@@ -128,7 +129,7 @@ namespace ys
 				}
 				break;
 			}
-			case ys::Shape::kDiamond:
+			case Shape::kDiamond:
 			{
 				auto slope = (double)(cur.bottom - cur.top) / (cur.right - cur.left);
 				for (double x = cur.left + width / 2; x < cur.right - pieceStar.cx * 2; x += pieceStar.cx)
@@ -145,7 +146,7 @@ namespace ys
 				}
 				break;
 			}
-			case ys::Shape::kButterfly:
+			case Shape::kButterfly:
 			{
 				auto slope = (double)(cur.bottom - cur.top) / (cur.right - cur.left);
 				for (double x = cur.left + pieceStar.cx * 6; x < cur.right - pieceStar.cx * 6; x += pieceStar.cx)
@@ -170,7 +171,7 @@ namespace ys
 				}
 				break;
 			}
-			case ys::Shape::kTriangle2:
+			case Shape::kTriangle2:
 			{
 				auto slope = (double)(cur.bottom - cur.top) / (cur.right - cur.left);
 				for (double x = cur.left + width / 2; x < cur.right - pieceStar.cx * 2; x += pieceStar.cx)
@@ -191,7 +192,7 @@ namespace ys
 				}
 				break;
 			}
-			case ys::Shape::kRect3:
+			case Shape::kRect3:
 			{
 				for (double y = cur.top + height * 2 / 10; y < cur.top + height * 8 / 10; y += pieceStar.cy)
 				{
@@ -230,5 +231,3 @@ namespace ys
 		//DrawText(hDC, line.c_str(), line.size(), &shapes[i].rect, DT_CENTER | DT_WORDBREAK | DT_EDITCONTROL);
 	}
 }
-
-#endif PRACTICE__2_6

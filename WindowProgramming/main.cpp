@@ -17,7 +17,8 @@
 
 #define PRACTICE__2_week2
 //#define PRACTICE__2_7
-#define PRACTICE__2_8
+//#define PRACTICE__2_9
+#define PRACTICE__2_10
 
 #ifdef PRACTICE__1
 
@@ -1230,7 +1231,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 }
 #endif // PRACTICE__2_7
 
-#ifdef PRACTICE__2_8
+#ifdef PRACTICE__2_9
 #include <random>
 #include "selectShape.h"
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
@@ -1366,7 +1367,13 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	return (::DefWindowProc(hWnd, Msg, wParam, lParam));
 }
 
-#endif // PRACTICE__2_8
+#endif // PRACTICE__2_9
+
+#ifdef PRACTICE__2_10
+
+#endif // PRACTICE__2_10
+
+
 #endif // PRACTICE__2_week2
 
 //�ѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤ�
