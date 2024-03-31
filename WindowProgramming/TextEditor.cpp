@@ -81,13 +81,7 @@ namespace ys
 
 		if (ys::InputManager::getKeyDown(VK_RETURN))
 		{
-			auto prevIndex = nextCharIndex;
-			enter();
-			if (prevIndex < note.at(curLine - 1).size())
-			{
-				note.at(curLine).append(note.at(curLine - 1).begin() + prevIndex, note.at(curLine - 1).end());
-				note.at(curLine - 1).erase(note.at(curLine - 1).begin() + prevIndex, note.at(curLine - 1).end());
-			}
+			enter(nextCharIndex);
 		}
 		if (ys::InputManager::getKeyDown(VK_TAB))
 		{
@@ -103,11 +97,18 @@ namespace ys
 		{
 			if (note.at(curLine).empty() || nextCharIndex == 0)
 			{
-				if (note.size() != 1)
+				if (curLine != 0 || nextCharIndex != 0)
 				{
-					nextCharIndex = note.at(curLine - 1).size();
+					size_t tmp = note.at(curLine - 1).size();
+					nextCharIndex = tmp;
 					note.at(curLine - 1).append(note.at(curLine).c_str());
 					note.erase(note.begin() + curLine--);
+					if (note.at(curLine).size() > kLineMaxSize)
+					{
+						enter(kLineMaxSize);
+						curLine--;
+						nextCharIndex = tmp;
+					}
 				}
 			}
 			else if (nextCharIndex > 0)
@@ -121,8 +122,15 @@ namespace ys
 			{
 				if (curLine != note.size() - 1)// 마지막줄이 아닐때
 				{
+					size_t tmp = note.at(curLine).size();
 					note.at(curLine).append(note.at(curLine + 1).c_str());
 					note.erase(note.begin() + curLine + 1);
+					if (note.at(curLine).size() > kLineMaxSize)
+					{
+						enter(kLineMaxSize);
+						curLine--;
+						nextCharIndex = tmp;
+					}
 				}
 			}
 			else//마지막문자가 아닐때
@@ -145,10 +153,14 @@ namespace ys
 		}
 		if (ys::InputManager::getKeyDown(VK_END))
 		{
-			if (note.at(curLine).size() >= kLineMaxSize)
-				enter();
-			else
-				nextCharIndex = note.at(curLine).size();
+			nextCharIndex = note.at(curLine).size();
+			if (nextCharIndex >= kLineMaxSize)
+			{
+				nextCharIndex = 0;
+				++curLine;
+				if(curLine >= note.size())
+					note.insert(note.begin() + curLine, L"");
+			}
 		}
 		if (ys::InputManager::getKeyDown(VK_F1))
 		{
@@ -158,6 +170,7 @@ namespace ys
 		{
 			isInsert = isInsert ? false : true;
 		}
+
 	}
 
 
@@ -179,6 +192,10 @@ namespace ys
 				note.at(curLine).insert(nextCharIndex, ch);
 				++nextCharIndex;
 			}
+			else
+			{
+				enter(nextCharIndex);
+			}
 		}
 		else //!isInsert && 마지막문자가 아닐때
 		{
@@ -186,32 +203,6 @@ namespace ys
 			note.at(curLine).insert(nextCharIndex, ch);
 			++nextCharIndex;
 		}
-
-		//if (isInsert)
-		//{
-		//	if (note.at(curLine).size() < kLineMaxSize)//현재 길이가 최대크기보다 작을때
-		//	{
-		//		note.at(curLine).insert(nextCharIndex, ch);
-		//		++nextCharIndex;
-		//	}
-		//}
-		//else
-		//{
-		//	if (nextCharIndex == note.at(curLine).size())//마지막문자 일때 (!isInsert && nextCharIndex == note.at(curLine).size() && note.at(curLine).size() < kLineMaxSize)
-		//	{
-		//		if (note.at(curLine).size() < kLineMaxSize)//현재 길이가 최대크기보다 작을때
-		//		{
-		//			note.at(curLine).insert(nextCharIndex, ch);
-		//			++nextCharIndex;
-		//		}
-		//	}
-		//	else//마지막문자가 아닐때(!isInsert && nextCharIndex != note.at(curLine).size() && note.at(curLine).size() < kLineMaxSize)
-		//	{
-		//		note.at(curLine).erase(note.at(curLine).begin() + nextCharIndex);
-		//		note.at(curLine).insert(nextCharIndex, ch);
-		//		++nextCharIndex;
-		//	}
-		//}
 	}
 
 
@@ -240,15 +231,16 @@ namespace ys
 	}
 
 
-	void TextEditor::enter()
+	void TextEditor::enter(const size_t prevIndex)
 	{
 		nextCharIndex = 0;
-		if (++curLine >= note.size())
-			note.push_back(L"");
-		//if (note.size() < kMaxLine)
-		//note.push_back(L"");
-		//else
-		//	curLine = 0;
+		++curLine;
+		note.insert(note.begin() + curLine, L"");
+		if (prevIndex < note.at(curLine - 1).size())//문자열 중간인가
+		{
+			note.at(curLine).insert(note.at(curLine).begin(), note.at(curLine - 1).begin() + prevIndex, note.at(curLine - 1).end());
+			note.at(curLine - 1).erase(note.at(curLine - 1).begin() + prevIndex, note.at(curLine - 1).end());
+		}
 	}
 }
 

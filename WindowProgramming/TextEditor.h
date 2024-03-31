@@ -15,7 +15,7 @@ namespace ys
 		static void Render(HDC hDC);
 
 	private:
-		static void enter();
+		static void enter(const size_t);
 
 
 	private:
