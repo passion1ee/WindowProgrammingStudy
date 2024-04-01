@@ -1371,10 +1371,11 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__2_10
 
+#include "ysRigidbodyGame.h"
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
-RECT windowRect{ 0, 0, 120 , 120 };
+RECT windowRect{ 0, 0, 1200 , 1200 };
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -1393,6 +1394,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	g_hInst = hInstance;
 
 	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+	ys::RigidbodyGame::setScreen(windowRect.right, windowRect.bottom);
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -1413,6 +1415,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
 
 	ys::InputManager::Init();
+	ys::RigidbodyGame::Init();
 
 	::ShowWindow(hWnd, nShowCmd);
 	::UpdateWindow(hWnd);
@@ -1424,6 +1427,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				break;
 		}
 		//game logic update
+		ys::RigidbodyGame::Run();
 	}
 	return msg.wParam;
 }
@@ -1447,6 +1451,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		RECT rect;
 		GetClientRect(hWnd, &rect);
+		ys::RigidbodyGame::setScreen(rect.right - rect.left, rect.bottom - rect.top);
 		break;
 	}
 	case WM_MOUSEMOVE:
@@ -1485,7 +1490,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		hDC = BeginPaint(hWnd, &ps);
 
-
+		ys::RigidbodyGame::render(hDC);
 
 		::EndPaint(hWnd, &ps);
 		break;

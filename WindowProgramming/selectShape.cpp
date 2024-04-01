@@ -1,6 +1,5 @@
 #include "selectShape.h"
-#include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
-#include <random>
+#include "stdfax.h"
 namespace ys
 {
 	std::vector<ys::Shape> selectShape::shapes;
@@ -11,9 +10,6 @@ namespace ys
 	Shape selectShape::selected;
 	
 	constexpr double resize = 0.2;
-	std::random_device SSrd;
-	std::mt19937 SSre(SSrd());
-	std::uniform_int_distribution<> shapeColor(0, 255);
 
 	void selectShape::setScreen(int width, int height)
 	{
@@ -74,29 +70,29 @@ namespace ys
 		shapes.push_back({ static_cast<Shapes>(Shapes::kHourglass), 0 });
 		shapes.push_back({ static_cast<Shapes>(Shapes::kPentagon), 0 });
 		shapes.push_back({ static_cast<Shapes>(Shapes::kPie), 0 });
-		std::shuffle(shapes.begin(), shapes.end(), SSre);
+		std::shuffle(shapes.begin(), shapes.end(), randomEngine);
 	}
 
 	void selectShape::Update()
 	{
 		if (ys::InputManager::getKeyDown((UINT)Key::W))
 		{
-			shapes[0].color = RGB(shapeColor(SSre), shapeColor(SSre), shapeColor(SSre));
+			shapes[0].color = RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine));
 			selected = shapes[0];
 		}
 		if (ys::InputManager::getKeyDown((UINT)Key::A))
 		{
-			shapes[1].color = RGB(shapeColor(SSre), shapeColor(SSre), shapeColor(SSre));
+			shapes[1].color = RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine));
 			selected = shapes[1];
 		}
 		if (ys::InputManager::getKeyDown((UINT)Key::S))
 		{
-			shapes[2].color = RGB(shapeColor(SSre), shapeColor(SSre), shapeColor(SSre));
+			shapes[2].color = RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine));
 			selected = shapes[2];
 		}
 		if (ys::InputManager::getKeyDown((UINT)Key::D))
 		{
-			shapes[3].color = RGB(shapeColor(SSre), shapeColor(SSre), shapeColor(SSre));
+			shapes[3].color = RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine));
 			selected = shapes[3];
 		}
 
