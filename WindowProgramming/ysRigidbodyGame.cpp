@@ -314,13 +314,13 @@ namespace ys
 		}
 		if (plain[player.position.y][player.position.x].color == RGB(125, 0, 255))
 		{//축소
-			if(player.size > 0.5)
-				player.size -= 0.1;
+			if(player.size > 5)
+				player.size--;
 		}
 		if (plain[player.position.y][player.position.x].color == RGB(255, 255, 0))
 		{//확대
-			if (player.size < 0.9)
-				player.size += 0.1;
+			if (player.size < 10)
+				player.size++;
 		}
 		if (plain[player.position.y][player.position.x].color == RGB(0, 0, 255))
 		{//모양변경
