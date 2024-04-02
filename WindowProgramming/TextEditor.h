@@ -11,7 +11,7 @@ namespace ys
 		static void Init();
 		static void Run();
 		static void Update();
-		static void Add(HDC hDC, WPARAM buff);
+		static void Add(WPARAM buff);
 		static void Render(HDC hDC);
 
 	private:

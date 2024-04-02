@@ -6,7 +6,7 @@
 //#define PRACTICE__1_1
 //#define PRACTICE__1_2
 
-//#define PRACTICE__2_week1
+#define PRACTICE__2_week1
 //#define PRACTICE__2_1
 //#define PRACTICE__2_2
 
@@ -1506,6 +1506,9 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #endif // PRACTICE__2_10
 
 #ifdef PRACTICE__2_11
+#include <windowsx.h>
+#include "ysInputShape.h"
+
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
@@ -1527,8 +1530,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	MSG msg;
 	g_hInst = hInstance;
 
+	ys::InputManager::Init();
+	ys::InputShape::Init();
+
 	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
-	//ys::RigidbodyGame::setScreen(windowRect.right, windowRect.bottom);
+	ys::InputShape::setScreen(windowRect.right, windowRect.bottom);
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -1548,9 +1554,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
 
-	ys::InputManager::Init();
-	//ys::RigidbodyGame::Init();
-
 	::ShowWindow(hWnd, nShowCmd);
 	::UpdateWindow(hWnd);
 	while (true) {
@@ -1561,7 +1564,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				break;
 		}
 		//game logic update
-		//ys::RigidbodyGame::Run(hWnd);
+		ys::InputShape::Run();
 	}
 	return msg.wParam;
 }
@@ -1574,6 +1577,11 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 
 	switch (Msg) {//InputManager는 singleton으로 해보고 게임 로직 자체는 Component패턴으로 가보자
+	case WM_CREATE:
+	{
+		CreateCaret(hWnd, NULL, 2, 20);
+		break;
+	}
 	case WM_GETMINMAXINFO:
 	{
 		MINMAXINFO* lpMMI = (MINMAXINFO*)lParam;
@@ -1585,13 +1593,21 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		RECT rect;
 		GetClientRect(hWnd, &rect);
-		//ys::RigidbodyGame::setScreen(rect.right - rect.left, rect.bottom - rect.top);
+		ys::InputShape::setScreen(rect.right - rect.left, rect.bottom - rect.top);
 		break;
 	}
-	case WM_MOUSEMOVE:
+	case WM_LBUTTONUP:
 	{
-		x = LOWORD(lParam);
-		y = HIWORD(lParam);
+		ys::InputShape::TextBoxClicked(hWnd, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_CHAR:
+	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
+		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != L'+' && wParam != L'-' && wParam != VK_ESCAPE)
+		{
+			ys::InputShape::Add(wParam);
+		}
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	}
 	case WM_KEYDOWN:
@@ -1621,13 +1637,15 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		hDC = BeginPaint(hWnd, &ps);
 
-		//ys::RigidbodyGame::render(hDC);
+		ys::InputShape::render(hDC);
 
 		::EndPaint(hWnd, &ps);
 		break;
 	}
 	case WM_DESTROY:
 		::PostQuitMessage(0);
+		HideCaret(hWnd);
+		DestroyCaret();
 		return 0;
 	default:
 		break;

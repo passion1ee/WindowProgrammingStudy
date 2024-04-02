@@ -32,7 +32,7 @@ namespace ys
 
 		selectRect.push_back(RECT(static_cast<LONG>(mainRect.right + mainWidth * resize), static_cast<LONG>(mainRect.top + mainHeight * resize),
 			static_cast<LONG>(screenWidth - mainHeight * resize), static_cast<LONG>(mainRect.bottom - mainHeight * resize)));  //(2, 1), (3, 2)
-	}
+	} 
 
 	void selectShape::render(HDC hDC)
 	{

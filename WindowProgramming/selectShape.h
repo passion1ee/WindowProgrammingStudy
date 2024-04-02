@@ -30,6 +30,8 @@ namespace ys
 	private:
 		static int screenWidth;
 		static int screenHeight;
+		static bool isTextBoxClicked;
+
 		static RECT mainRect;
 		static std::vector<RECT> selectRect;
 		static Shape selected;
