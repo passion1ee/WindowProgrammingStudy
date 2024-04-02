@@ -1499,6 +1499,138 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	return (::DefWindowProc(hWnd, Msg, wParam, lParam));
 }
 
+#include "ysRigidbodyGame.h"
+#include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
+#pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
+
+RECT windowRect{ 0, 0, 1200 , 1200 };
+
+HINSTANCE g_hInst;
+LPCTSTR lpszClass = L"Window Class Name";
+LPCTSTR lpszWindowName = L"WinAPI Practice";
+
+LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+
+WNDCLASSEX NewWndClass(UINT, WNDPROC, HINSTANCE, HICON,
+	HCURSOR, HBRUSH, LPCWSTR, LPCWSTR, HICON);
+
+
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+{
+	HWND hWnd;
+	MSG msg;
+	g_hInst = hInstance;
+
+	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+	ys::RigidbodyGame::setScreen(windowRect.right, windowRect.bottom);
+	WNDCLASSEX WndClass;
+	WndClass.cbSize = sizeof(WndClass);
+	WndClass.style = CS_HREDRAW | CS_VREDRAW;
+	WndClass.lpfnWndProc = (WNDPROC)WinProc;
+	WndClass.cbClsExtra = 0;
+	WndClass.cbWndExtra = 0;
+	WndClass.hInstance = hInstance;
+	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	WndClass.lpszMenuName = NULL;
+	WndClass.lpszClassName = lpszClass;
+	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+	::RegisterClassEx(&WndClass);
+
+	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
+
+	ys::InputManager::Init();
+	ys::RigidbodyGame::Init();
+
+	::ShowWindow(hWnd, nShowCmd);
+	::UpdateWindow(hWnd);
+	while (true) {
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {//event
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+			if (msg.message == WM_QUIT)
+				break;
+		}
+		//game logic update
+		ys::RigidbodyGame::Run(hWnd);
+	}
+	return msg.wParam;
+}
+
+LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	HDC hDC;
+	static int x{}, y{};
+	std::wstring line;
+
+
+	switch (Msg) {//InputManager는 singleton으로 해보고 게임 로직 자체는 Component패턴으로 가보자
+	case WM_GETMINMAXINFO:
+	{
+		MINMAXINFO* lpMMI = (MINMAXINFO*)lParam;
+		lpMMI->ptMinTrackSize.x = windowRect.right - windowRect.left;
+		lpMMI->ptMinTrackSize.y = windowRect.bottom - windowRect.top;
+		break;
+	}
+	case WM_SIZE:
+	{
+		RECT rect;
+		GetClientRect(hWnd, &rect);
+		ys::RigidbodyGame::setScreen(rect.right - rect.left, rect.bottom - rect.top);
+		break;
+	}
+	case WM_MOUSEMOVE:
+	{
+		x = LOWORD(lParam);
+		y = HIWORD(lParam);
+		break;
+	}
+	case WM_KEYDOWN:
+	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
+		auto keyflags = HIWORD(lParam);
+		ys::InputManager::setKeyState(wParam,
+			(keyflags & KF_REPEAT) == KF_REPEAT,
+			(keyflags & KF_UP) == KF_UP);
+		if (ys::InputManager::getKeyDown((UINT)ys::Key::W) || ys::InputManager::getKeyDown((UINT)ys::Key::A) || 
+			ys::InputManager::getKeyDown((UINT)ys::Key::S) || ys::InputManager::getKeyDown((UINT)ys::Key::D))
+			InvalidateRect(hWnd, NULL, TRUE);
+		break;
+	}
+	case WM_KEYUP:
+	{
+		auto keyflags = HIWORD(lParam);
+
+		ys::InputManager::setKeyState(wParam,
+			(keyflags & KF_REPEAT) == KF_REPEAT,
+			(keyflags & KF_UP) == KF_UP);
+		if (ys::InputManager::getKeyUp((UINT)ys::Key::R))
+			InvalidateRect(hWnd, NULL, TRUE);
+		break;
+	}
+	case WM_PAINT:
+	{
+		Beep(199, 100);
+		PAINTSTRUCT ps;
+		hDC = BeginPaint(hWnd, &ps);
+
+		ys::RigidbodyGame::render(hDC);
+
+		::EndPaint(hWnd, &ps);
+		break;
+	}
+	case WM_DESTROY:
+		::PostQuitMessage(0);
+		return 0;
+	default:
+		break;
+	}
+
+	return (::DefWindowProc(hWnd, Msg, wParam, lParam));
+}
+
 #endif // PRACTICE__2_10
 
 

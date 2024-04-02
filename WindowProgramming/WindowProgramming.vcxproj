@@ -147,11 +147,14 @@
     <ClCompile Include="RandomShape.cpp" />
     <ClCompile Include="selectShape.cpp" />
     <ClCompile Include="TextEditor.cpp" />
+    <ClCompile Include="ysRigidbodyGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="TextEditor.h" />
+    <ClInclude Include="ysRigidbodyGame.h" />
+    <ClInclude Include="stdfax.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
