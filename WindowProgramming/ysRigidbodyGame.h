@@ -6,7 +6,7 @@ namespace ys
 {
 	enum class Shape : BYTE
 	{
-		kTriangle, kHourglass, kPentagon, kPie, kCount, kEmpty
+		kTriangle, kHourglass, kPentagon, kPie, kCount, kRect, kStar, kEmpty
 	};
 
  	struct Object
@@ -16,9 +16,10 @@ namespace ys
 		COLORREF color;
 		POINT position;//39, 39
 
-		Object() : shape(Shape::kEmpty), color(0), position({ 0, 0 }), size(1) {}
+		Object() : shape(Shape::kEmpty), color(0), position({ 0, 0 }), size(10) {}
 		Object(Shape _shape, COLORREF _color, POINT _position, int _size)
 			: shape(_shape), color(_color), position(_position), size(_size) {}
+
 	};
 
 	class RigidbodyGame
@@ -28,19 +29,22 @@ namespace ys
 		static void setScreen(int width, int height);
 
 		static void Init();
-		static void Run();
+		static void Run(HWND hWnd);
 		static void render(HDC hDC);
 
 	private:
-		static void Update();
+		static void Update(HWND hWnd);
 		static void renderFrame(HDC hDC);
 		static void renderObject(HDC hDC, Object object);
-
+		static void collide(HWND hWnd);
+		static void victorySound();
+		static void defeatSound();
 	private:
 		static int screenWidth;
 		static int screenHeight;
 
 		static Object player;
+		static POINT playerPrevPosition;
 		static Object goal;
 		static std::vector<std::vector<Object>> plain;
 		static std::vector<COLORREF> colors;

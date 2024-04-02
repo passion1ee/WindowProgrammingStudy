@@ -1427,7 +1427,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				break;
 		}
 		//game logic update
-		ys::RigidbodyGame::Run();
+		ys::RigidbodyGame::Run(hWnd);
 	}
 	return msg.wParam;
 }
@@ -1466,8 +1466,9 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		ys::InputManager::setKeyState(wParam,
 			(keyflags & KF_REPEAT) == KF_REPEAT,
 			(keyflags & KF_UP) == KF_UP);
-
-		InvalidateRect(hWnd, NULL, TRUE);
+		if (ys::InputManager::getKeyDown((UINT)ys::Key::W) || ys::InputManager::getKeyDown((UINT)ys::Key::A) || 
+			ys::InputManager::getKeyDown((UINT)ys::Key::S) || ys::InputManager::getKeyDown((UINT)ys::Key::D))
+			InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	}
 	case WM_KEYUP:
@@ -1477,11 +1478,8 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		ys::InputManager::setKeyState(wParam,
 			(keyflags & KF_REPEAT) == KF_REPEAT,
 			(keyflags & KF_UP) == KF_UP);
-		if (ys::InputManager::getKeyUp((UINT)ys::Key::Q))
-		{
-			PostMessage(hWnd, WM_CLOSE, 0, 0);
-		}
-		InvalidateRect(hWnd, NULL, TRUE);
+		if (ys::InputManager::getKeyUp((UINT)ys::Key::R))
+			InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	}
 	case WM_PAINT:
