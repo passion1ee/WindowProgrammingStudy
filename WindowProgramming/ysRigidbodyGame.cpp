@@ -239,8 +239,8 @@ namespace ys
 	{
 		auto realXGrid = xGrid * 0.1 * object.size;
 		auto realYGrid = yGrid * 0.1 * object.size;
-		auto realPositionX = object.position.x * xGrid;
-		auto realPositionY = object.position.y * yGrid;
+		auto realPositionX = object.position.x * xGrid + (xGrid - realXGrid) / 2.0;
+		auto realPositionY = object.position.y * yGrid + (yGrid - realYGrid) / 2.0;
 		switch (object.shape) {
 		case ys::Shape::kTriangle:
 		{
