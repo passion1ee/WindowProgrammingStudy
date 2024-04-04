@@ -13,15 +13,16 @@ namespace ys
 
 	struct Object
 	{
-		int size;
 		Shape shape;
-		COLORREF color;
+		std::pair<COLORREF, COLORREF> colors;//테두리, 내부
 		RECT position;
+		int size;
+		int penWidth; //1~5
 
-		Object() : shape(Shape::kEmpty), color(0), position({0, 0, 0, 0}), size(300) {}
+		Object() : size(100) {}
 
-		Object(Shape _shape, COLORREF _color, RECT _position, int _size)
-			: shape(_shape), color(_color), position(_position), size(_size)
+		Object(Shape _shape, std::pair<COLORREF, COLORREF> _color, RECT _position, int _size, int _penWidth)
+			: shape(_shape), colors(_color), position(_position), size(_size), penWidth(_penWidth)
 		{}
 
 	};
@@ -35,30 +36,29 @@ namespace ys
 
 		static void Init();
 		static void Run();
-		static void render(HDC hDC);
+		static void render(HWND hWnd, HDC hDC);
 		static void Add(WPARAM buff);
 
 	private:
 		static void Update();
-		static void renderFrame(HDC hDC);
 		static void renderObject(HDC hDC, Object object);
-		static bool isVal();
+		static bool isVal(Object& input);
 
 	private://global
 		static int screenWidth;
 		static int screenHeight;
+		static bool isTextBoxClicked;
+		static bool isPrintAll;
 
 	private://textbox
 		static RECT textBox;
-		static bool isTextBoxClicked;
 		static std::wstring stringBuff;
 		static int nextCharIndex;
 		static bool isUpper;
 		static bool isInsert;
 
 	private://Object
-		static std::vector<Object> selectObj;
-		static size_t selectedIndex;
+		static std::vector<Object> objectPool;
 		static std::vector<Shape> shapes;
 	};
 

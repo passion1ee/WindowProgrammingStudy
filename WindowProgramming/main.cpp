@@ -1512,7 +1512,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
-RECT windowRect{ 0, 0, 1200 , 1200 };
+RECT windowRect{ 0, 0, 900 , 900 };
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -1533,8 +1533,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	ys::InputManager::Init();
 	ys::InputShape::Init();
 
-	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 	ys::InputShape::setScreen(windowRect.right, windowRect.bottom);
+	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -1637,7 +1637,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		hDC = BeginPaint(hWnd, &ps);
 
-		ys::InputShape::render(hDC);
+		ys::InputShape::render(hWnd, hDC);
 
 		::EndPaint(hWnd, &ps);
 		break;
