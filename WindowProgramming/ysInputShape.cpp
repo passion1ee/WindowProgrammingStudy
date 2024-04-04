@@ -3,6 +3,8 @@
 #include <tchar.h>
 #include <cwctype>
 
+constexpr BYTE kPenWidthMax = 10;
+
 namespace ys
 {
 	int InputShape::screenWidth;
@@ -131,21 +133,25 @@ namespace ys
 		}
 		else if(!objectPool.empty())
 		{//도형모드
-			if (ys::InputManager::getKey(VK_LEFT))
+			if (ys::InputManager::getKeyDown(VK_LEFT))
 			{
-				OffsetRect(&objectPool.back().position, -10, 0);
+				objectPool.back().position.left -= 10;
+				objectPool.back().position.right -= 10;
 			}
-			if (ys::InputManager::getKey(VK_RIGHT))
+			if (ys::InputManager::getKeyDown(VK_RIGHT))
 			{
-				OffsetRect(&objectPool.back().position, 10, 0);
+				objectPool.back().position.left += 10;
+				objectPool.back().position.right += 10;
 			}
-			if (ys::InputManager::getKey(VK_UP))
+			if (ys::InputManager::getKeyDown(VK_UP))
 			{
-				OffsetRect(&objectPool.back().position, 0, -10);
+				objectPool.back().position.top -= 10;
+				objectPool.back().position.bottom -= 10;
 			}
-			if (ys::InputManager::getKey(VK_DOWN))
+			if (ys::InputManager::getKeyDown(VK_DOWN))
 			{
-				OffsetRect(&objectPool.back().position, 0, 10);
+				objectPool.back().position.top += 10;
+				objectPool.back().position.bottom += 10;
 			}
 
 			if (ys::InputManager::getKeyDown('1'))
@@ -159,17 +165,31 @@ namespace ys
 
 			if (ys::InputManager::getKeyDown(VK_ADD))
 			{//도형 테두리 크기 +변환
-
+				if (objectPool.back().penWidth < kPenWidthMax)
+				{
+					objectPool.back().penWidth++;
+				}
+				else if(objectPool.back().size < 200)
+				{
+					objectPool.back().size += 2;
+				}
 			}
 			if (ys::InputManager::getKeyDown(VK_SUBTRACT))
 			{//도형 테두리 크기 -변환
-
+				if (objectPool.back().penWidth > 0)
+				{
+					objectPool.back().penWidth--;
+				}
+				else if(objectPool.back().size > 3)
+				{
+					objectPool.back().size -= 2;
+				}
 			}
 			
 
 			if (ys::InputManager::getKeyDown((UINT)Key::A))//이전 Obj <<rotate
 			{
-				std::rotate(objectPool.begin(), objectPool.end(), objectPool.end());
+				std::rotate(objectPool.begin(), objectPool.end() - 1, objectPool.end());
 			}
 			if (ys::InputManager::getKeyDown((UINT)Key::D)) //넥스트 Obj
 			{
@@ -271,7 +291,7 @@ namespace ys
 		{
 		case ys::Shape::kDot:
 		{
-			Ellipse(hDC, rect.left, rect.top, rect.left + 5, rect.top + 5);
+			Ellipse(hDC, rect.left, rect.top, rect.left + object.penWidth, rect.top + object.penWidth);
 			break;
 		}
 		case ys::Shape::kLine:
@@ -321,7 +341,7 @@ namespace ys
 		if (static_cast<int>(input.shape) < 0 || static_cast<int>(input.shape) >= static_cast<int>(Shape::kCount))
 			return false;
 
-		if (input.penWidth <= 0 || input.penWidth > 5)
+		if (input.penWidth <= 0 || input.penWidth > kPenWidthMax)
 			return false;
 
 		RECT tmpRect = { 0, 0, screenWidth, screenHeight };

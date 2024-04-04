@@ -17,7 +17,7 @@ namespace ys
 		std::pair<COLORREF, COLORREF> colors;//테두리, 내부
 		RECT position;
 		int size;
-		int penWidth; //1~5
+		int penWidth; //1~10
 
 		Object() : size(100) {}
 
