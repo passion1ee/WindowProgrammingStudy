@@ -364,7 +364,7 @@ namespace ys
 		auto iter = std::find_if(objects.begin(), objects.end(), [](const Object& other) {
 			return objects[selected - 1].position.x == other.position.x && 
 				objects[selected - 1].position.y == other.position.y &&
-				objects[selected - 1] != other;
+				objects[selected - 1].color != other.color;
 		});
 
 		if (objects.end() != iter)
