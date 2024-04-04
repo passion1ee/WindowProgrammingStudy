@@ -12,10 +12,10 @@ namespace ys
 	Object RigidbodyGame::player;
 	POINT RigidbodyGame::playerPrevPosition;
 	Object RigidbodyGame::goal;
+	
+	std::uniform_int_distribution<> ObjectShape(0, static_cast<int>(Shape::kCount) - 1);
 	std::vector<std::vector<Object>> RigidbodyGame::plain;
 	std::vector<COLORREF> RigidbodyGame::colors;
-
-	std::uniform_int_distribution<> ObjectShape(0, static_cast<int>(Shape::kCount) - 1);
 	double xGrid;
 	double yGrid;
 

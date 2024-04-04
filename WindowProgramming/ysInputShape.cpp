@@ -18,8 +18,8 @@ namespace ys
 	bool InputShape::isUpper;
 	bool InputShape::isInsert;
 
-	std::vector<Object> InputShape::objectPool;
-	std::vector<Shape> InputShape::shapes;
+	std::vector<InputShape::Object> InputShape::objectPool;
+	std::vector<InputShape::Shape> InputShape::shapes;
 
 	void InputShape::setScreen(int width, int height)
 	{
@@ -74,14 +74,14 @@ namespace ys
 
 			if (ys::InputManager::getKeyDown(VK_RETURN) && objectPool.size() < 10)
 			{
-				Object inputObj;
+				InputShape::Object inputObj;
 				int tmp;
 				std::wstringstream ss;
 				ss << stringBuff;
 				stringBuff = L"";
 				nextCharIndex = 0;
 				ss >> tmp >> inputObj.position.left >> inputObj.position.top >> inputObj.position.right >> inputObj.position.bottom >> inputObj.penWidth;
-				inputObj.shape = static_cast<Shape>(tmp);
+				inputObj.shape = static_cast<InputShape::Shape>(tmp);
 
 				if (isVal(inputObj))
 				{
@@ -251,7 +251,7 @@ namespace ys
 			SetCaretPos(textBox.left + 10 + size.cx, textBox.top + 10);
 		}
 		TextOut(hDC, textBox.left + 10, textBox.top + 10, stringBuff.c_str(), stringBuff.size());
-		TextOut(hDC, 100, 200, std::to_wstring(nextCharIndex).c_str(), std::to_wstring(nextCharIndex).size());
+		TextOut(hDC, 100, 200, std::to_wstring(objectPool.size()).c_str(), std::to_wstring(objectPool.size()).size());
 	}
 
 	void InputShape::Add(WPARAM buff)
@@ -282,25 +282,25 @@ namespace ys
 		}
 	}
 
-	void InputShape::renderObject(HDC hDC, Object object)
+	void InputShape::renderObject(HDC hDC, InputShape::Object object)
 	{
 		auto& rect = object.position;
 		auto width = (rect.right - rect.left) * 0.01 * object.size;
 		auto height = (rect.bottom - rect.top) * 0.01 * object.size;
 		switch (object.shape)
 		{
-		case ys::Shape::kDot:
+		case ys::InputShape::Shape::kDot:
 		{
 			Ellipse(hDC, rect.left, rect.top, rect.left + object.penWidth, rect.top + object.penWidth);
 			break;
 		}
-		case ys::Shape::kLine:
+		case ys::InputShape::Shape::kLine:
 		{
 			MoveToEx(hDC, rect.left, rect.top, NULL);
 			LineTo(hDC, rect.left + width, rect.top + height);
 			break;
 		}
-		case ys::Shape::kTriangle:
+		case ys::InputShape::Shape::kTriangle:
 		{
 			POINT vertex[3] = { {static_cast<LONG>(rect.left + width / 2.0), rect.top},
 					{rect.left, rect.bottom},
@@ -309,23 +309,23 @@ namespace ys
 			Polygon(hDC, vertex, 3);
 			break;
 		}
-		case ys::Shape::kRect:
+		case ys::InputShape::Shape::kRect:
 		{
 			Rectangle(hDC, rect.left, rect.top, rect.left + width, rect.top + height);
 			break;
 		}
-		case ys::Shape::kPentagon:
+		case ys::InputShape::Shape::kPentagon:
 		{
 			POINT vertex[5] = { {static_cast<LONG>(rect.left + width / 2.0), rect.top},
-						{rect.left, static_cast<LONG>(rect.top + height * 4.5 / 10.0)},
-						{static_cast<LONG>(rect.left + width * 3.0 / 10.0), rect.bottom},
-						{static_cast<LONG>(rect.left + width * 7.0 / 10.0), rect.bottom},
-						{rect.right, static_cast<LONG>(rect.top + height * 4.5 / 10.0)},
+						{rect.left, static_cast<LONG>(rect.top + height * 4.2 / 10.0)},
+						{static_cast<LONG>(rect.left + width * 2 / 10.0), rect.top + height},
+						{static_cast<LONG>(rect.left + width * 8 / 10.0), rect.top + height},
+						{rect.left + width, static_cast<LONG>(rect.top + height * 4.2 / 10.0)},
 			};
 			Polygon(hDC, vertex, 5);
 			break;
 		}
-		case ys::Shape::kCircle:
+		case ys::InputShape::Shape::kCircle:
 		{
 			auto diameter = width > height ? height : width;
 			Ellipse(hDC, rect.left, rect.top, rect.left + diameter, rect.top + diameter);
@@ -336,9 +336,9 @@ namespace ys
 		}
 	}
 
-	bool InputShape::isVal(Object& input)
+	bool InputShape::isVal(InputShape::Object& input)
 	{
-		if (static_cast<int>(input.shape) < 0 || static_cast<int>(input.shape) >= static_cast<int>(Shape::kCount))
+		if (static_cast<int>(input.shape) < 0 || static_cast<int>(input.shape) >= static_cast<int>(InputShape::Shape::kCount))
 			return false;
 
 		if (input.penWidth <= 0 || input.penWidth > kPenWidthMax)
