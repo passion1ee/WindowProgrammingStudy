@@ -343,7 +343,7 @@ namespace ys
 
 
 
-	void TextEditor::Add(HDC hDC, WPARAM buff)
+	void TextEditor::Add(WPARAM buff)
 	{
 		if(pdownPrevNote.empty() && pupPrevNote.empty())
 		{
