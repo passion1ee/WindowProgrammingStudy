@@ -1,6 +1,10 @@
 #include "ysDigitAlphaPlus.h"
 #include "stdfax.h"
 
+constexpr BYTE kDigitMod = 1;
+constexpr BYTE kAlphaMod = 2;
+constexpr BYTE kDualMod = 3;
+
 namespace ys
 {
 	int DigitAlphaPlus::screenWidth;
@@ -10,10 +14,11 @@ namespace ys
 	double DigitAlphaPlus::xGrid;
 	double DigitAlphaPlus::yGrid;
 
+	BYTE DigitAlphaPlus::mod;
+
 	POINT DigitAlphaPlus::player;
 	std::vector<DigitAlphaPlus::Object> DigitAlphaPlus::alphabets;
-	std::vector<std::vector<std::wstring>> DigitAlphaPlus::plain;
-	std::wstring DigitAlphaPlus::goalWord;
+	
 
 	void DigitAlphaPlus::setScreen(int width, int height)
 	{
@@ -26,66 +31,37 @@ namespace ys
 	void DigitAlphaPlus::Init()
 	{
 		alphabets.clear();
-		plain.clear();
+		std::vector<std::vector<std::wstring>> plain;
 		mapSize = 20;
-		std::vector<std::wstring> allWord = { L"APPLE", L"DEBUG", L"PROGRAMMING", L"WINDOWS", L"HETEROGENEOUS" };
-		std::uniform_int_distribution<> selectWord(0, allWord.size() - 1);
-		goalWord = allWord[selectWord(randomEngine)];
 
 		int id{};
-		int allWordSize{};
-		for (auto& word : allWord)
-			allWordSize += word.size();
-		alphabets.reserve(26 + allWordSize);
+		alphabets.reserve(26 + 10);
 		plain.assign(mapSize, std::vector<std::wstring>(mapSize, L""));
 
 		std::uniform_int_distribution<> position(0, mapSize - 1);
-		for (auto i = L'A'; i <= L'Z';)
-		{
-			auto x = position(randomEngine); auto y = position(randomEngine);
-			if (plain[y][x] != L"" || y == 0 || y == 1)
-				continue;
-
-			plain[y][x] = i;
-			alphabets.push_back(Object(i, POINT(x, y), id++));
-			++i;
-		}
-
-		for (auto& word : allWord)
-		{
-			if (word == goalWord)
-				continue;
-			for (auto i = 0; i < word.size();)
+		if (mod & kDigitMod) {
+			for (auto i = L'0'; i <= L'9';)
 			{
 				auto x = position(randomEngine); auto y = position(randomEngine);
 				if (plain[y][x] != L"" || y == 0 || y == 1)
 					continue;
 
-				plain[y][x] = word[i];
-				alphabets.push_back(Object(word[i], POINT(x, y), id++));
+				plain[y][x] = i;
+				alphabets.push_back(Object(i - L'0', POINT(x, y), false, id++));
 				++i;
 			}
 		}
+		if(mod & kAlphaMod){
+			for (auto i = L'A'; i <= L'Z';)
+			{
+				auto x = position(randomEngine); auto y = position(randomEngine);
+				if (plain[y][x] != L"" || y == 0 || y == 1)
+					continue;
 
-		auto wordStart = (mapSize - (goalWord.size())) / 2;
-		std::uniform_int_distribution<> isRandomPos(0, goalWord.size());
-		for (auto& piece : goalWord)
-		{
-			if (isRandomPos(randomEngine) < goalWord.size() / 2)
-			{
-				int x, y;
-				do {
-					x = position(randomEngine); y = position(randomEngine);
-				} while (plain[y][x] != L"" || y == 0 || y == 1);
-				plain[y][x] = piece;
-				alphabets.push_back(Object(piece, POINT(x, y), id++));
+				plain[y][x] = i;
+				alphabets.push_back(Object(i - L'A' + 1, POINT(x, y), true, id++));
+				++i;
 			}
-			else
-			{
-				plain[1][wordStart] = piece;
-				alphabets.push_back(Object(piece, POINT(wordStart, 1), id++));
-			}
-			wordStart++;
 		}
 
 		int x, y;
@@ -107,7 +83,28 @@ namespace ys
 		renderFrame(hDC);
 		for (const auto& alphabet : alphabets)
 			renderObject(hDC, alphabet);
+		auto hBrush = CreateSolidBrush(RGB(255, 255, 0));
+		auto oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 		Ellipse(hDC, player.x * xGrid, player.y * yGrid, (player.x + 1) * xGrid, (player.y + 1) * yGrid);
+		SelectObject(hDC, oldBrush);
+		DeleteObject(hBrush);
+		SetBkColor(hDC, RGB(255, 255, 0));
+		TextOut(hDC, player.x * xGrid + xGrid / 2, player.y * yGrid + yGrid / 2, std::to_wstring(mod).c_str(), std::to_wstring(mod).size());
+		SetBkColor(hDC, RGB(255, 255, 255)); 
+	}
+
+	void DigitAlphaPlus::select(WPARAM w)
+	{
+		bool isDigit{ true };
+		std::wstring input; input = w;
+		for (auto& ch : input)
+			if (!iswdigit(ch))
+				isDigit = false;
+		if (isDigit && std::stoi(input) <= 3)
+		{
+			mod = std::stoi(input);
+			Init();
+		}
 	}
 
 	void DigitAlphaPlus::Update(HWND hWnd)
@@ -135,19 +132,8 @@ namespace ys
 
 				if (alphabets.end() != otherIter)//블럭의 이동 후 위치와 동일한 블럭이 있는가
 				{
-					if (player.x == mapSize - 1)
-						player.x = 0;
-					else
-						player.x++;
-					if (iter->position.x == mapSize - 1)
-						iter->position.x = 0;
-					else
-						iter->position.x++;
-				}
-				else
-				{
-					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
-					plain[player.y][player.x] = L"";
+					otherIter->count += iter->count;
+					alphabets.erase(iter);
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -173,19 +159,8 @@ namespace ys
 						other != *iter; });
 				if (alphabets.end() != otherIter)//블럭의 이동 후 위치와 동일한 블럭이 있는가
 				{
-					if (player.x == 0)
-						player.x = mapSize - 1;
-					else
-						player.x--;
-					if (iter->position.x == 0)
-						iter->position.x = mapSize - 1;
-					else
-						iter->position.x--;
-				}
-				else
-				{
-					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
-					plain[player.y][player.x] = L"";
+					otherIter->count += iter->count;
+					alphabets.erase(iter);
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -211,19 +186,8 @@ namespace ys
 						other != *iter; });
 				if (alphabets.end() != otherIter)//블럭의 이동 후 위치와 동일한 블럭이 있는가
 				{
-					if (player.y == mapSize - 1)
-						player.y = 0;
-					else
-						player.y++;
-					if (iter->position.y == mapSize - 1)
-						iter->position.y = 0;
-					else
-						iter->position.y++;
-				}
-				else
-				{
-					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
-					plain[player.y][player.x] = L"";
+					otherIter->count += iter->count;
+					alphabets.erase(iter);
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -249,26 +213,15 @@ namespace ys
 						other != *iter; });
 				if (alphabets.end() != otherIter)//블럭의 이동 후 위치와 동일한 블럭이 있는가
 				{
-					if (player.y == 0)
-						player.y = mapSize - 1;
-					else
-						player.y--;
-					if (iter->position.y == 0)
-						iter->position.y = mapSize - 1;
-					else
-						iter->position.y--;
-				}
-				else
-				{
-					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
-					plain[player.y][player.x] = L"";
+					otherIter->count += iter->count;
+					alphabets.erase(iter);
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
 			}
 		}
 
-		if (InputManager::getKeyDown((UINT)Key::S))
+		if (InputManager::getKeyDown((UINT)Key::P))
 		{
 			Init();
 		}
@@ -294,14 +247,9 @@ namespace ys
 	}
 	void DigitAlphaPlus::renderObject(HDC hDC, Object object)
 	{
-		auto wordStart = (mapSize - (goalWord.size())) / 2;
-		if (object.position.y == 1 && (object.position.x >= wordStart && object.position.x <= wordStart + goalWord.size()))
-		{
-			SetBkColor(hDC, RGB(125, 125, 255));
-			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, &object.alphabet, 1);
-			SetBkColor(hDC, RGB(255, 255, 255));
-		}
+		if(object.isAlpha)
+			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, std::wstring(1, L'A' + object.count % 27 - 1).c_str(), std::wstring(1, L'A' + object.count % 27 - 1).size());
 		else
-			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, &object.alphabet, 1);
+			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, std::to_wstring(object.count).c_str(), std::to_wstring(object.count).size());
 	}
 }

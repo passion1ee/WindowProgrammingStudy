@@ -1927,7 +1927,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__2_14
 #include <windowsx.h>
-#include "ysWordPuzzle.h"
+#include "ysDigitAlphaPlus.h"
 
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
@@ -1951,9 +1951,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	g_hInst = hInstance;
 
 	ys::InputManager::Init();
-	ys::WordPuzzle::Init();
+	ys::DigitAlphaPlus::Init();
 
-	ys::WordPuzzle::setScreen(windowRect.right, windowRect.bottom);
+	ys::DigitAlphaPlus::setScreen(windowRect.right, windowRect.bottom);
 	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
@@ -1984,7 +1984,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				break;
 		}
 		//game logic update
-		ys::WordPuzzle::Run(hWnd);
+		ys::DigitAlphaPlus::Run(hWnd);
 	}
 	return msg.wParam;
 }
@@ -2008,7 +2008,16 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		RECT rect;
 		GetClientRect(hWnd, &rect);
-		ys::WordPuzzle::setScreen(rect.right - rect.left, rect.bottom - rect.top);
+		ys::DigitAlphaPlus::setScreen(rect.right - rect.left, rect.bottom - rect.top);
+		break;
+	}
+	case WM_CHAR:
+	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
+		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != L'+' && wParam != L'-' && wParam != VK_ESCAPE)
+		{
+			ys::DigitAlphaPlus::select(wParam);
+			InvalidateRect(hWnd, NULL, TRUE);
+		}
 		break;
 	}
 	case WM_KEYDOWN:
@@ -2036,7 +2045,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		PAINTSTRUCT ps;
 		hDC = BeginPaint(hWnd, &ps);
 
-		ys::WordPuzzle::render(hDC);
+		ys::DigitAlphaPlus::render(hDC);
 
 		::EndPaint(hWnd, &ps);
 		break;

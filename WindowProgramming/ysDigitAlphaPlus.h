@@ -11,18 +11,19 @@ namespace ys
 		struct Object
 		{
 			int id;
-			wchar_t alphabet;
+			int count;
+			bool isAlpha;
 			POINT position;
 
 			Object() = delete;
-			Object(wchar_t alphabet_, POINT _position, int _id)
-				: alphabet(alphabet_), position(_position), id(_id) {}
+			Object(int alphabet_, POINT _position, bool isAlpha_,int _id)
+				: count(alphabet_), position(_position), isAlpha(isAlpha_), id(_id) {}
 
 			bool operator==(const Object& other)
 			{
 				if (id != other.id)
 					return false;
-				if (alphabet != other.alphabet)
+				if (count != other.count)
 					return false;
 				if (position.x != other.position.x || position.y != other.position.y)
 					return false;
@@ -36,12 +37,12 @@ namespace ys
 		static void Init();
 		static void Run(HWND hWnd);
 		static void render(HDC hDC);
+		static void select(WPARAM w);
 
 	private:
 		static void Update(HWND hWnd);
 		static void renderFrame(HDC hDC);
 		static void renderObject(HDC hDC, Object object);
-
 	private:
 		static int screenWidth;
 		static int screenHeight;
@@ -50,9 +51,9 @@ namespace ys
 		static double xGrid;
 		static double yGrid;
 
+		static BYTE mod;// 1 2 3
+
 		static POINT player;
 		static std::vector<Object> alphabets;
-		static std::vector<std::vector<std::wstring>> plain;
-		static std::wstring goalWord;
 	};
 }
