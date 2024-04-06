@@ -27,6 +27,18 @@
     <ClCompile Include="selectShape.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ysInputShape.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ysRigidbodyGame.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ysShapeLand.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ysWordPuzzle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RandomShape.h">
@@ -36,6 +48,21 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="selectShape.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ysInputShape.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ysRigidbodyGame.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdfax.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ysShapeLand.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ysWordPuzzle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
