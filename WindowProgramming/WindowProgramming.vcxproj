@@ -147,6 +147,7 @@
     <ClCompile Include="RandomShape.cpp" />
     <ClCompile Include="selectShape.cpp" />
     <ClCompile Include="TextEditor.cpp" />
+    <ClCompile Include="ysDigitAlphaPlus.cpp" />
     <ClCompile Include="ysInputShape.cpp" />
     <ClCompile Include="ysRigidbodyGame.cpp" />
     <ClCompile Include="ysShapeLand.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="TextEditor.h" />
+    <ClInclude Include="ysDigitAlphaPlus.h" />
     <ClInclude Include="ysInputShape.h" />
     <ClInclude Include="ysRigidbodyGame.h" />
     <ClInclude Include="stdfax.h" />
