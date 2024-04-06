@@ -28,7 +28,7 @@ namespace ys
 		alphabets.clear();
 		plain.clear();
 		mapSize = 20;
-		std::vector<std::wstring> allWord = { L"APPLE", L"DEBUG", L"PROGRAMMING", L"WINDOWS", L"HETEROGENEOUS" };
+		std::vector<std::wstring> allWord = { L"APPLEVISIONPRO", L"DEBUG", L"PROGRAMMING", L"WINDOWS", L"HETEROGENEOUS" };
 		std::uniform_int_distribution<> selectWord(0, allWord.size() - 1);
 		goalWord = allWord[selectWord(randomEngine)];
 
@@ -107,7 +107,12 @@ namespace ys
 		renderFrame(hDC);
 		for (const auto& alphabet : alphabets)
 			renderObject(hDC, alphabet);
+
+		auto hBrush = CreateSolidBrush(RGB(255, 255, 0)); 
+		auto oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
 		Ellipse(hDC, player.x * xGrid, player.y * yGrid, (player.x + 1) * xGrid, (player.y + 1) * yGrid);
+		SelectObject(hDC, oldBrush);
+		DeleteObject(hBrush);
 	}
 
 	void WordPuzzle::Update(HWND hWnd)
