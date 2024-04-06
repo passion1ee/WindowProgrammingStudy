@@ -1882,15 +1882,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		ys::WordPuzzle::setScreen(rect.right - rect.left, rect.bottom - rect.top);
 		break;
 	}
-	case WM_CHAR:
-	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
-		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != L'+' && wParam != L'-' && wParam != VK_ESCAPE)
-		{
-			ys::WordPuzzle::select(wParam);
-			InvalidateRect(hWnd, NULL, TRUE);
-		}
-		break;
-	}
 	case WM_KEYDOWN:
 	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
 		auto keyflags = HIWORD(lParam);

@@ -37,7 +37,6 @@ namespace ys
 		static void Init();
 		static void Run(HWND hWnd);
 		static void render(HDC hDC);
-		static void select(WPARAM w);
 
 	private:
 		static void Update(HWND hWnd);
@@ -56,7 +55,7 @@ namespace ys
 
 		static POINT player;
 		static std::vector<Object> alphabets;
-		static std::vector<std::vector<wchar_t>> plain;
+		static std::vector<std::vector<std::wstring>> plain;
 		static std::wstring goalWord;
 	};
 }

@@ -3,13 +3,16 @@
 
 namespace ys
 {
+	int WordPuzzle::screenWidth;
+	int WordPuzzle::screenHeight;
+
 	BYTE WordPuzzle::mapSize;
 	double WordPuzzle::xGrid;
 	double WordPuzzle::yGrid;
 
 	POINT WordPuzzle::player;
 	std::vector<WordPuzzle::Object> WordPuzzle::alphabets;
-	std::vector<std::vector<wchar_t>> WordPuzzle::plain;
+	std::vector<std::vector<std::wstring>> WordPuzzle::plain;
 	std::wstring WordPuzzle::goalWord;
 
 	void WordPuzzle::setScreen(int width, int height)
@@ -22,26 +25,29 @@ namespace ys
 
 	void WordPuzzle::Init()
 	{
+		alphabets.clear();
+		plain.clear();
 		mapSize = 20;
-		std::vector<std::wstring> allWord = { L"APPLE", L"DEBUG", L"GAME", L"WINDOWS", L"HETEROGENEOUS" };
+		std::vector<std::wstring> allWord = { L"APPLE", L"DEBUG", L"PROGRAMMING", L"WINDOWS", L"HETEROGENEOUS" };
 		std::uniform_int_distribution<> selectWord(0, allWord.size() - 1);
 		goalWord = allWord[selectWord(randomEngine)];
 
+		int id{};
 		int allWordSize{};
 		for (auto& word : allWord)
 			allWordSize += word.size();
 		alphabets.reserve(26 + allWordSize);
-		plain.assign(mapSize, std::vector<wchar_t>(mapSize, L''));
+		plain.assign(mapSize, std::vector<std::wstring>(mapSize, L""));
 
 		std::uniform_int_distribution<> position(0, mapSize - 1);
 		for (auto i = L'A'; i <= L'Z';)
 		{
 			auto x = position(randomEngine); auto y = position(randomEngine);
-			if (plain[x][y] != L'' || y == 0 || y == 1)
+			if (plain[y][x] != L"" || y == 0 || y == 1)
 				continue;
 
-			plain[x][y] = i;
-			alphabets.push_back(Object(i, POINT(x, y), 0));
+			plain[y][x] = i;
+			alphabets.push_back(Object(i, POINT(x, y), id++));
 			++i;
 		}
 
@@ -52,24 +58,41 @@ namespace ys
 			for (auto i = 0; i < word.size();)
 			{
 				auto x = position(randomEngine); auto y = position(randomEngine);
-				if (plain[x][y] != L'' || y == 0 || y == 1)
+				if (plain[y][x] != L"" || y == 0 || y == 1)
 					continue;
 
-				plain[x][y] = word[i];
-				alphabets.push_back(Object(word[i], POINT(x, y), 0));
+				plain[y][x] = word[i];
+				alphabets.push_back(Object(word[i], POINT(x, y), id++));
 				++i;
 			}
 		}
 
 		auto wordStart = (mapSize - (goalWord.size())) / 2;
-		auto tmpWord = goalWord;
-		std::uniform_int_distribution<> goalPosition(wordStart, wordStart + goalWord.size());
+		std::uniform_int_distribution<> isRandomPos(0, goalWord.size());
 		for (auto& piece : goalWord)
 		{
-			plain[wordStart++][1] = piece;
-			alphabets.push_back(Object(i, POINT(x, y), 0));
-			++i;
+			if (isRandomPos(randomEngine) < goalWord.size() / 2)
+			{
+				int x, y;
+				do	{
+					x = position(randomEngine); y = position(randomEngine);
+				} while (plain[y][x] != L"" || y == 0 || y == 1);
+				plain[y][x] = piece;
+				alphabets.push_back(Object(piece, POINT(x, y), id++));
+			}
+			else
+			{
+				plain[1][wordStart] = piece;
+				alphabets.push_back(Object(piece, POINT(wordStart, 1), id++));
+			}
+			wordStart++;
 		}
+
+		int x, y;
+		do {
+			x = position(randomEngine);
+		} while (plain[mapSize - 1][x] != L"");
+		player.x = x; player.y = mapSize - 1;
 	}
 
 	void WordPuzzle::Run(HWND hWnd)
@@ -77,6 +100,14 @@ namespace ys
 		InputManager::BeforeUpdate();
 		Update(hWnd);
 		InputManager::AfterUpdate();
+	}
+
+	void WordPuzzle::render(HDC hDC)
+	{
+		renderFrame(hDC);
+		for (const auto& alphabet : alphabets)
+			renderObject(hDC, alphabet);
+		Ellipse(hDC, player.x * xGrid, player.y * yGrid, (player.x + 1) * xGrid, (player.y + 1) * yGrid);
 	}
 
 	void WordPuzzle::Update(HWND hWnd)
@@ -96,10 +127,12 @@ namespace ys
 					iter->position.x = mapSize - 1;
 				else
 					iter->position.x--;
+
 				auto otherIter = std::find_if(alphabets.begin(), alphabets.end(), [iter](const Object& other) {
 					return iter->position.x == other.position.x &&
 						iter->position.y == other.position.y &&
 						other != *iter; });
+
 				if (alphabets.end() != otherIter)//블럭의 이동 후 위치와 동일한 블럭이 있는가
 				{
 					if (player.x == mapSize - 1)
@@ -113,6 +146,8 @@ namespace ys
 				}
 				else
 				{
+					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
+					plain[player.y][player.x] = L"";
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -149,6 +184,8 @@ namespace ys
 				}
 				else
 				{
+					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
+					plain[player.y][player.x] = L"";
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -185,6 +222,8 @@ namespace ys
 				}
 				else
 				{
+					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
+					plain[player.y][player.x] = L"";
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -221,6 +260,8 @@ namespace ys
 				}
 				else
 				{
+					plain[iter->position.y][iter->position.x] = plain[player.y][player.x];
+					plain[player.y][player.x] = L"";
 					Beep(1760, 40);
 					Beep(2218, 80);
 				}
@@ -258,12 +299,31 @@ namespace ys
 			LineTo(hDC, i * xGrid, screenHeight);
 		}
 	}
+	void WordPuzzle::renderObject(HDC hDC, Object object)
+	{
+		auto wordStart = (mapSize - (goalWord.size())) / 2;
+		if (object.position.y == 1 && (object.position.x >= wordStart && object.position.x <= wordStart + goalWord.size()))
+		{
+			SetBkColor(hDC, RGB(125, 125, 255));
+			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, &object.alphabet, 1);
+			SetBkColor(hDC, RGB(255, 255, 255));
+		}
+		else
+			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, &object.alphabet, 1);
+	}
 	bool WordPuzzle::isWord()
 	{
-		for (auto& alphabet : alphabets)
-		{
+		auto wordStart = (mapSize - (goalWord.size())) / 2;
+		std::wstring goalCheck;
+		for(int i = 0; i < goalWord.size(); ++i)
+			for (auto iter = alphabets.begin(); iter != alphabets.end(); ++iter)
+				if (iter->position.y == 1 && iter->position.x == wordStart + i)
+					goalCheck += iter->alphabet;
 
-		}
+		if (goalCheck == goalWord)
+			return true;
+		else
+			return false;
 	}
 	void WordPuzzle::victorySound()
 	{
