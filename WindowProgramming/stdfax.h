@@ -1,5 +1,6 @@
 #pragma once
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
+#include "..\\..\\WinProgramming\\MyEngine_source\\ysTimer.h"
 #include <random>
 
 namespace ys

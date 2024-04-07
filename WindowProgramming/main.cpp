@@ -1926,10 +1926,12 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #endif // PRACTICE__2_13
 
 #ifdef PRACTICE__2_14
+#pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
 #include <windowsx.h>
 #include "ysDigitAlphaPlus.h"
 
 #include "..\\..\\WinProgramming\\MyEngine_source\\ysInputManager.h"
+#include "..\\..\\WinProgramming\\MyEngine_source\\ysTimer.h"
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
 RECT windowRect{ 0, 0, 900 , 900 };
@@ -1950,11 +1952,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	MSG msg;
 	g_hInst = hInstance;
 
-	ys::InputManager::Init();
-	ys::DigitAlphaPlus::Init();
-
-	ys::DigitAlphaPlus::setScreen(windowRect.right, windowRect.bottom);
-	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 	WNDCLASSEX WndClass;
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -1974,6 +1971,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
 
+	ys::InputManager::Init();
+	ys::DigitAlphaPlus::Init(hWnd, windowRect);
+
 	::ShowWindow(hWnd, nShowCmd);
 	::UpdateWindow(hWnd);
 	while (true) {
@@ -1984,7 +1984,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 				break;
 		}
 		//game logic update
-		ys::DigitAlphaPlus::Run(hWnd);
+		ys::DigitAlphaPlus::Run();
 	}
 	return msg.wParam;
 }
@@ -2008,7 +2008,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	{
 		RECT rect;
 		GetClientRect(hWnd, &rect);
-		ys::DigitAlphaPlus::setScreen(rect.right - rect.left, rect.bottom - rect.top);
+		ys::DigitAlphaPlus::setScreen(rect);
 		break;
 	}
 	case WM_CHAR:
@@ -2016,7 +2016,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		if (wParam != VK_BACK && wParam != VK_RETURN && wParam != VK_TAB && wParam != L'+' && wParam != L'-' && wParam != VK_ESCAPE)
 		{
 			ys::DigitAlphaPlus::select(wParam);
-			InvalidateRect(hWnd, NULL, TRUE);
+			//InvalidateRect(hWnd, NULL, TRUE);
 		}
 		break;
 	}
@@ -2037,16 +2037,13 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 			(keyflags & KF_REPEAT) == KF_REPEAT,
 			(keyflags & KF_UP) == KF_UP);
 
-		InvalidateRect(hWnd, NULL, TRUE);
+		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	}
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
 		hDC = BeginPaint(hWnd, &ps);
-
-		ys::DigitAlphaPlus::render(hDC);
-
 		::EndPaint(hWnd, &ps);
 		break;
 	}

@@ -32,26 +32,31 @@ namespace ys
 		};
 
 	public:
-		static void setScreen(int width, int height);
+		static void setScreen(RECT screenSize);
 
-		static void Init();
-		static void Run(HWND hWnd);
-		static void render(HDC hDC);
+		static void Init(HWND hWnd_, RECT screenSize);
+		static void Run();
+		static void render();
 		static void select(WPARAM w);
 
 	private:
-		static void Update(HWND hWnd);
-		static void renderFrame(HDC hDC);
-		static void renderObject(HDC hDC, Object object);
+		static void Update();
+		static void renderFrame();
+		static void renderObject(Object object);
 	private:
-		static int screenWidth;
-		static int screenHeight;
+		static HWND hWnd;
+		static HDC hDC;
+		static HDC hBackDC;
+		static HBITMAP hBitmap;
+
+		static POINT screen;
 
 		static BYTE mapSize;
 		static double xGrid;
 		static double yGrid;
 
 		static BYTE mod;// 1 2 3
+		static float coolTime;
 
 		static POINT player;
 		static std::vector<Object> alphabets;

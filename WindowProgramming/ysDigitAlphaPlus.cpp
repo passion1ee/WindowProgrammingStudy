@@ -1,43 +1,62 @@
 #include "ysDigitAlphaPlus.h"
 #include "stdfax.h"
 
+#include <iostream>
+
 constexpr BYTE kDigitMod = 1;
 constexpr BYTE kAlphaMod = 2;
 constexpr BYTE kDualMod = 3;
 
 namespace ys
 {
-	int DigitAlphaPlus::screenWidth;
-	int DigitAlphaPlus::screenHeight;
+	HWND DigitAlphaPlus::hWnd;
+	HDC DigitAlphaPlus::hDC;
+	HDC DigitAlphaPlus::hBackDC;
+	HBITMAP DigitAlphaPlus::hBitmap;
 
+	POINT DigitAlphaPlus::screen;
 	BYTE DigitAlphaPlus::mapSize;
 	double DigitAlphaPlus::xGrid;
 	double DigitAlphaPlus::yGrid;
 
 	BYTE DigitAlphaPlus::mod;
+	float DigitAlphaPlus::coolTime;
 
 	POINT DigitAlphaPlus::player;
 	std::vector<DigitAlphaPlus::Object> DigitAlphaPlus::alphabets;
 	
 
-	void DigitAlphaPlus::setScreen(int width, int height)
+	void DigitAlphaPlus::setScreen(RECT screenSize)
 	{
-		screenWidth = width;
-		screenHeight = height;
-		xGrid = screenWidth / static_cast<double>(mapSize);
-		yGrid = screenHeight / static_cast<double>(mapSize);
+		//::AdjustWindowRect(&screenSize, WS_OVERLAPPEDWINDOW, FALSE);
+		screen.x = screenSize.right - screenSize.left; screen.y = screenSize.bottom - screenSize.top;
+		
+		SetWindowPos(hWnd, nullptr, 0, 0, screen.x, screen.y, 0);
+
+		hBitmap = CreateCompatibleBitmap(hDC, screen.x, screen.y);
+		auto oldBitmap = SelectObject(hBackDC, hBitmap);
+		DeleteObject(oldBitmap);
+		xGrid = screen.x / static_cast<double>(mapSize);
+		yGrid = screen.y / static_cast<double>(mapSize);
 	}
 
-	void DigitAlphaPlus::Init()
+	void DigitAlphaPlus::Init(HWND hWnd_, RECT screenSize)
 	{
+		hWnd = hWnd_;
+		hDC = GetDC(hWnd_);
+		hBackDC = CreateCompatibleDC(hDC);
+
 		alphabets.clear();
 		std::vector<std::vector<std::wstring>> plain;
 		mapSize = 20;
+
+		ys::DigitAlphaPlus::setScreen(screenSize);
 
 		int id{};
 		alphabets.reserve(26 + 10);
 		plain.assign(mapSize, std::vector<std::wstring>(mapSize, L""));
 
+		coolTime = 0;
 		std::uniform_int_distribution<> position(0, mapSize - 1);
 		if (mod & kDigitMod) {
 			for (auto i = L'0'; i <= L'9';)
@@ -69,28 +88,34 @@ namespace ys
 			x = position(randomEngine);
 		} while (plain[mapSize - 1][x] != L"");
 		player.x = x; player.y = mapSize - 1;
+		Timer::Init();
 	}
 
-	void DigitAlphaPlus::Run(HWND hWnd)
+	void DigitAlphaPlus::Run()
 	{
+		Timer::Update();
 		InputManager::BeforeUpdate();
-		Update(hWnd);
+		Update();
 		InputManager::AfterUpdate();
+		render();
 	}
 
-	void DigitAlphaPlus::render(HDC hDC)
+	void DigitAlphaPlus::render()
 	{
-		renderFrame(hDC);
+		PatBlt(hBackDC, 0, 0, screen.x, screen.y, WHITENESS);
+		renderFrame();
 		for (const auto& alphabet : alphabets)
-			renderObject(hDC, alphabet);
+			renderObject(alphabet);
 		auto hBrush = CreateSolidBrush(RGB(255, 255, 0));
-		auto oldBrush = (HBRUSH)SelectObject(hDC, hBrush);
-		Ellipse(hDC, player.x * xGrid, player.y * yGrid, (player.x + 1) * xGrid, (player.y + 1) * yGrid);
-		SelectObject(hDC, oldBrush);
+		auto oldBrush = (HBRUSH)SelectObject(hBackDC, hBrush);
+		Ellipse(hBackDC, player.x * xGrid, player.y * yGrid, (player.x + 1) * xGrid, (player.y + 1) * yGrid);
+		SelectObject(hBackDC, oldBrush);
 		DeleteObject(hBrush);
-		SetBkColor(hDC, RGB(255, 255, 0));
-		TextOut(hDC, player.x * xGrid + xGrid / 2, player.y * yGrid + yGrid / 2, std::to_wstring(mod).c_str(), std::to_wstring(mod).size());
-		SetBkColor(hDC, RGB(255, 255, 255)); 
+		SetBkColor(hBackDC, RGB(255, 255, 0));
+		TextOut(hBackDC, player.x * xGrid + xGrid / 2, player.y * yGrid + yGrid / 2, std::to_wstring(mod).c_str(), std::to_wstring(mod).size());
+		SetBkColor(hBackDC, RGB(255, 255, 255));
+
+		BitBlt(hDC, 0, 0, screen.x, screen.y, hBackDC, 0, 0, SRCCOPY);
 	}
 
 	void DigitAlphaPlus::select(WPARAM w)
@@ -103,14 +128,24 @@ namespace ys
 		if (isDigit && std::stoi(input) <= 3)
 		{
 			mod = std::stoi(input);
-			Init();
+			Init(hWnd, RECT(0, 0, screen.x, screen.y));
 		}
 	}
 
-	void DigitAlphaPlus::Update(HWND hWnd)
+	void DigitAlphaPlus::Update()
 	{
+		bool isCoolTime{ true };
+		bool isMove{ false };
+		
+		if (coolTime >= 0)
+			coolTime -= Timer::getDeltaTime();
+		else
+		{
+			coolTime = 0.0f;
+			isCoolTime = false;
+		}
 
-		if (InputManager::getKeyDown(VK_LEFT))
+		if (InputManager::getKey(VK_LEFT) && !isCoolTime)
 		{
 			if (player.x == 0)
 				player.x = mapSize - 1;
@@ -138,8 +173,9 @@ namespace ys
 					Beep(2218, 80);
 				}
 			}
+			isMove = true;
 		}
-		if (InputManager::getKeyDown(VK_RIGHT))
+		if (InputManager::getKey(VK_RIGHT) && !isCoolTime)
 		{
 			if (player.x == mapSize - 1)
 				player.x = 0;
@@ -165,8 +201,9 @@ namespace ys
 					Beep(2218, 80);
 				}
 			}
+			isMove = true;
 		}
-		if (InputManager::getKeyDown(VK_UP))
+		if (InputManager::getKey(VK_UP) && !isCoolTime)
 		{
 			if (player.y == 0)
 				player.y = mapSize - 1;
@@ -192,8 +229,9 @@ namespace ys
 					Beep(2218, 80);
 				}
 			}
+			isMove = true;
 		}
-		if (InputManager::getKeyDown(VK_DOWN))
+		if (InputManager::getKey(VK_DOWN) && !isCoolTime)
 		{
 			if (player.y == mapSize - 1)
 				player.y = 0;
@@ -219,11 +257,16 @@ namespace ys
 					Beep(2218, 80);
 				}
 			}
+			isMove = true;
 		}
-
+		if (isMove && !isCoolTime)
+		{
+			std::cout << 1 / Timer::getDeltaTime() << std::endl;
+			coolTime = 0.15f;
+		}
 		if (InputManager::getKeyDown((UINT)Key::P))
 		{
-			Init();
+			Init(hWnd, RECT(0, 0, screen.x, screen.y));
 		}
 		if (InputManager::getKeyUp((UINT)Key::Q))
 		{
@@ -232,24 +275,32 @@ namespace ys
 
 	}
 
-	void DigitAlphaPlus::renderFrame(HDC hDC)
+	void DigitAlphaPlus::renderFrame()
 	{
 		for (int i = 0; i < mapSize; ++i)
 		{
-			MoveToEx(hDC, 0, i * yGrid, NULL);
-			LineTo(hDC, screenWidth, i * yGrid);
+			MoveToEx(hBackDC, 0, i * yGrid, NULL);
+			LineTo(hBackDC, screen.x, i * yGrid);
 		}
 		for (int i = 0; i < mapSize; ++i)
 		{
-			MoveToEx(hDC, i * xGrid, 0, NULL);
-			LineTo(hDC, i * xGrid, screenHeight);
+			MoveToEx(hBackDC, i * xGrid, 0, NULL);
+			LineTo(hBackDC, i * xGrid, screen.y);
 		}
 	}
-	void DigitAlphaPlus::renderObject(HDC hDC, Object object)
+	void DigitAlphaPlus::renderObject(Object object)
 	{
 		if(object.isAlpha)
-			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, std::wstring(1, L'A' + object.count % 27 - 1).c_str(), std::wstring(1, L'A' + object.count % 27 - 1).size());
+		{
+			if(object.count % 26 == 0)
+				TextOut(hBackDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2,
+					std::wstring(1, L'Z').c_str(), std::wstring(1, L'Z').size());
+			else
+				TextOut(hBackDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2,
+					std::wstring(1, L'A' + object.count % 26 - 1).c_str(), std::wstring(1, L'A' + object.count % 26 - 1).size());
+		}
 		else
-			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, std::to_wstring(object.count).c_str(), std::to_wstring(object.count).size());
+			TextOut(hBackDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, 
+				std::to_wstring(object.count).c_str(), std::to_wstring(object.count).size());
 	}
 }
