@@ -9,7 +9,6 @@
 #define PRACTICE__2_week1
 //#define PRACTICE__2_1
 //#define PRACTICE__2_2
-
 //#define PRACTICE__2_3
 //#define PRACTICE__2_4
 //#define PRACTICE__2_5
@@ -19,10 +18,10 @@
 //#define PRACTICE__2_7
 //#define PRACTICE__2_9
 //#define PRACTICE__2_10
-//////////////////////////////#define PRACTICE__2_11
-//////////////////////////////#define PRACTICE__2_12
-//////////////////////////////#define PRACTICE__2_13
-#define PRACTICE__2_14
+//#define PRACTICE__2_11
+//#define PRACTICE__2_12
+//#define PRACTICE__2_13
+//#define PRACTICE__2_14
 
 
 #ifdef PRACTICE__1

@@ -307,7 +307,7 @@ namespace ys
 	void WordPuzzle::renderObject(HDC hDC, Object object)
 	{
 		auto wordStart = (mapSize - (goalWord.size())) / 2;
-		if (object.position.y == 1 && (object.position.x >= wordStart && object.position.x <= wordStart + goalWord.size()))
+		if (object.position.y == 1 && (object.position.x >= wordStart && object.position.x <= wordStart + goalWord.size() - 1))
 		{
 			SetBkColor(hDC, RGB(125, 125, 255));
 			TextOut(hDC, object.position.x * xGrid + xGrid / 2, object.position.y * yGrid + yGrid / 2, &object.alphabet, 1);
