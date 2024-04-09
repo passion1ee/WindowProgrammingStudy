@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main2.cpp" />
     <ClCompile Include="RandomShape.cpp" />
     <ClCompile Include="selectShape.cpp" />
     <ClCompile Include="TextEditor.cpp" />
