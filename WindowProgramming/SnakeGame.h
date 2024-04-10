@@ -32,9 +32,12 @@ namespace ys
 
 	private:
 		void Update();//플레이어 자동이동코드 가장자리
-		void move(Object object);
 		void renderFrame();
-		void renderObject(Object object);
+		void renderObject(Object& object);
+		void move(Object& head, std::list<Object> body);
+		void collide();
+		void catchSnake();
+
 	private:
 		HWND hWnd;
 		HDC hDC;

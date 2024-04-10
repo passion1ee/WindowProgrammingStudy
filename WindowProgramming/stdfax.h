@@ -8,4 +8,5 @@ namespace ys
 	static std::random_device ranDevice;
 	static std::mt19937 randomEngine(ranDevice());
 	static std::uniform_int_distribution<> ObjectColor(0, 255);
+	static std::uniform_int_distribution<> uid;
 }
