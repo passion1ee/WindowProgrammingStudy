@@ -147,6 +147,7 @@
     <ClCompile Include="main2.cpp" />
     <ClCompile Include="RandomShape.cpp" />
     <ClCompile Include="selectShape.cpp" />
+    <ClCompile Include="SnakeGame.cpp" />
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="ysDigitAlphaPlus.cpp" />
     <ClCompile Include="ysInputShape.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />
+    <ClInclude Include="SnakeGame.h" />
     <ClInclude Include="TextEditor.h" />
     <ClInclude Include="ysDigitAlphaPlus.h" />
     <ClInclude Include="ysInputShape.h" />
