@@ -17,7 +17,7 @@
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
 ys::SnakeGame game;
-RECT windowRect{ 0, 0, 900 , 900 };
+RECT windowRect{ 0, 0, 1200 , 1200 };
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";

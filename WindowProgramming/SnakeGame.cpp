@@ -16,19 +16,8 @@ constexpr BYTE kRectHeight = 0x20;
 namespace ys
 {
 	SnakeGame::SnakeGame()
-		: hWnd(nullptr), hDC(nullptr), hBackDC(nullptr), hBitmap(nullptr), screen({ 0, 0 }), xGrid(0), yGrid(0), frameCheck(0), keyCoolTime(0)
+		: hWnd(nullptr), hDC(nullptr), hBackDC(nullptr), hBitmap(nullptr), screen({ 0, 0 }), xGrid(0), yGrid(0), frameCheck(0), moveCoolTime(0), setMoveTime(0), speed(0.00f)
 	{
-		std::uniform_int_distribution<> position(0, kMapSize - 1);
-		player = Object(0, 100, { 0, 0 }, RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine)), kHorizon, true);
-		for (int i = 0; i < 20;)
-		{
-			auto x = position(randomEngine); auto y = position(randomEngine);
-			if (feeds.end() != std::find(feeds.begin(), feeds.end(), [x, y](Object& comp) {return comp.position.x == x && comp.position.y == y; }) || (x == 0 && y == 0))
-				continue;
-			feeds.push_back(Object(0, 100, {position(randomEngine), position(randomEngine)},
-				RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine)), kStop, true));
-			++i;
-		}
 
 	}
 
@@ -53,8 +42,20 @@ namespace ys
 		hBackDC = CreateCompatibleDC(hDC);
 
 		SnakeGame::setScreen(screenSize);
-
-		keyCoolTime = 0;
+		std::uniform_int_distribution<> position(0, kMapSize - 1);
+		player = Object(0, 100, { 0, 0 }, RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine)), kHorizon, true);
+		for (int i = 0; i < 30;)
+		{
+			auto x = position(randomEngine); auto y = position(randomEngine);
+			if (feeds.end() == std::find_if(feeds.begin(), feeds.end(), [x, y](Object& comp) {return comp.position.x == x && comp.position.y == y; }) && (x != 0 && y != 0))
+			{
+				feeds.push_back(Object(1, 50, { position(randomEngine), position(randomEngine) },
+					RGB(ObjectColor(randomEngine), ObjectColor(randomEngine), ObjectColor(randomEngine)), kStop, true));
+				++i;
+			}
+		}
+		snakeList.assign(1, std::list<Object>(1, player));
+		moveCoolTime = 0;
 		Timer::Init();
 	}
 
@@ -63,13 +64,24 @@ namespace ys
 		static bool isRun = false;
 		InputManager::BeforeUpdate();
 		Timer::Update();
+		if (ys::InputManager::getKeyDown(VK_ADD) && speed <= 1 / Timer::getRealFPS() / 2)
+		{
+			speed += 0.001f;
+		}
+		if (ys::InputManager::getKeyDown(VK_SUBTRACT) && speed > -1 / Timer::getRealFPS())
+			speed -= 0.001f;
 		if (InputManager::getKeyUp((UINT)Key::S) || isRun) {
-			if (1 / Timer::getRealFPS() <= (frameCheck += Timer::getDeltaTime())) {
+			if (InputManager::getKeyUp((UINT)Key::S)) {
+				setMoveTime = 2 / Timer::getRealFPS();
+				isRun = isRun ? false : true;
+			}
+			moveCoolTime += Timer::getDeltaTime();
+			if (1 / Timer::getRealFPS() - speed <= (frameCheck += Timer::getDeltaTime())) {
 				frameCheck = 0.0f;
 				Update();
 				Render();
+				Timer::Rander(hDC, screen);
 			}
-			isRun = true;
 		}
 		InputManager::AfterUpdate();
 	}
@@ -80,46 +92,82 @@ namespace ys
 		
 		renderFrame();
 
+		for(auto& feed : feeds)
+		{
+			auto brush = CreateSolidBrush(feed.color);
+			auto oldBrush = SelectObject(hBackDC, brush);
+			renderObject(feed, false);
+			SelectObject(hBackDC, oldBrush);
+			DeleteObject(brush);
+		}
+
+		for(auto& box : boxs)
+		{
+			auto brush = CreateSolidBrush(box.color);
+			auto oldBrush = SelectObject(hBackDC, brush);
+			renderObject(box, false);
+			SelectObject(hBackDC, oldBrush);
+			DeleteObject(brush);
+		}
+
+		for(auto& list : snakeList)
+			for(auto& obj : list)
+			{
+				auto brush = CreateSolidBrush(obj.color);
+				auto oldBrush = SelectObject(hBackDC, brush);
+				renderObject(obj, true);
+				SelectObject(hBackDC, oldBrush);
+				DeleteObject(brush);
+			}
 
 		BitBlt(hDC, 0, 0, screen.x, screen.y, hBackDC, 0, 0, SRCCOPY);
 	}
 
 	void SnakeGame::Update()
 	{
+		std::cout << speed << std::endl;
 		if (InputManager::getKey(VK_LEFT))
 		{
-			player.moveState = kHorizon;
-			player.isPlus = false;
+			snakeList.front().front().moveState = kHorizon;
+			snakeList.front().front().isPlus = false;
 		}
 		if (InputManager::getKey(VK_RIGHT))
 		{
-			player.moveState = kHorizon;
-			player.isPlus = true;
+			snakeList.front().front().moveState = kHorizon;
+			snakeList.front().front().isPlus = true;
 		}
 		if (InputManager::getKey(VK_UP))
 		{
-			player.moveState = kVertical;
-			player.isPlus = false;
+			snakeList.front().front().moveState = kVertical;
+			snakeList.front().front().isPlus = false;
 		}
 		if (InputManager::getKey(VK_DOWN))
 		{
-			player.moveState = kVertical;
-			player.isPlus = true;
+			snakeList.front().front().moveState = kVertical;
+			snakeList.front().front().isPlus = true;
 		}
 
-		for (auto& list : snakeList)
+		if (setMoveTime <= moveCoolTime)
 		{
-			if (list == snakeList[0]) continue;
-			move(list.front(), list);
+			for (auto& list : snakeList)
+			{
+				if (list == snakeList.front()) continue;
+				move(list);
+			}
 		}
-		move(player, snakeList[0]);
+
+		move(snakeList.front());
+		player = snakeList.front().front();
+
+		if(snakeList.size() > 1)
+			catchSnake();
 		collide();
-		catchSnake();
 
 		if (ys::InputManager::getKeyUp((UINT)ys::Key::Q))
 		{
 			PostMessage(hWnd, WM_CLOSE, 0, 0);
 		}
+		if (setMoveTime <= moveCoolTime) moveCoolTime = 0;
 	}
 
 	void SnakeGame::renderFrame()
@@ -136,97 +184,150 @@ namespace ys
 		}
 	}
 
-	void SnakeGame::renderObject(Object& object)
+	void SnakeGame::renderObject(Object& object, bool isCircle)
 	{
+		auto realXGrid = xGrid * 0.01 * object.size;
+		auto realYGrid = yGrid * 0.01 * object.size;
+		auto realPositionX = object.position.x * xGrid + (xGrid - realXGrid) / 2.0;
+		auto realPositionY = object.position.y * yGrid + (yGrid - realYGrid) / 2.0;
+		if (isCircle)
+			Ellipse(hBackDC, realPositionX, realPositionY, realPositionX + realXGrid, realPositionY + realYGrid);
+		else
+			Rectangle(hBackDC, realPositionX, realPositionY, realPositionX + realXGrid, realPositionY + realYGrid);
 	}
 
-	void SnakeGame::move(Object& head, std::list<Object> body)
+	void SnakeGame::move(std::list<Object>& body)
 	{	
-		head.prevPosition = head.position;
-		switch (head.moveState)
+		body.front().prevPosition = body.front().position;
+		switch (body.front().moveState)
 		{
 		case kHorizon:
 		{
-			if(head.isPlus)
+			if(body.front().isPlus)
 			{
-				if(head.position.x == 39)
+				if(body.front().position.x >= 39)
 				{
-					head.position.y++;
-					head.isPlus = false;
+					if (body.front().position.y >= 39)
+						body.front().position.y = 0;
+					else
+						body.front().position.y++;
+					body.front().isPlus = false;
 				}
 				else
-					head.position.x++;
+					body.front().position.x++;
 			}
 			else
 			{
-				if (head.position.x == 0)
+				if (body.front().position.x <= 0)
 				{
-					head.position.y--;
-					head.isPlus = true;
+					if (body.front().position.y >= 39)
+						body.front().position.y = 0;
+					else
+						body.front().position.y++;
+					body.front().isPlus = true;
 				}
 				else
-					head.position.x--;
+					body.front().position.x--;
 			}
 			break;
 		}
 		case kVertical:
 		{
-			if (head.isPlus)
+			if (body.front().isPlus)
 			{
-				if (head.position.y == 39)
+				if (body.front().position.y >= 39)
 				{
-					head.position.x++;
-					head.isPlus = false;
+					if (body.front().position.x >= 39)
+						body.front().position.x = 0;
+					else
+						body.front().position.x++;
+					body.front().isPlus = false;
 				}
 				else
-					head.position.y++;
+					body.front().position.y++;
 			}
 			else
 			{
-				if (head.position.y == 0)
+				if (body.front().position.y <= 0)
 				{
-					head.position.x--;
-					head.isPlus = true;
+					if (body.front().position.x >= 39)
+						body.front().position.x = 0;
+					else
+						body.front().position.x++;
+					body.front().isPlus = true;
 				}
 				else
-					head.position.y--;
+					body.front().position.y--;
 			}
 			break;
 		}
 		case kRect:
-			head.moveState |= kRectWidth;
+			body.front().moveState |= kRectWidth;
 			break;
 		case kStop:
 			break;
 		default:
-			if (head.moveState & (kRect | kRectWidth))
+			if (body.front().moveState & (kRectWidth))
 			{
-				head.isPlus ? head.position.x++ : head.position.x--;
-				head.rectMoveCnt++;
-				if (head.rectMoveCnt >= 3)
+				if (body.front().isPlus)
 				{
-					head.isPlus ? true : false;
-					head.moveState = (head.moveState & ~kRectWidth) | kRectHeight;
-					head.rectMoveCnt = 0;
+					if (body.front().position.x >= 39)
+						body.front().position.x = 0;
+					else
+						body.front().position.x++;
+				}
+				else
+				{
+					if (body.front().position.x <= 0)
+						body.front().position.x = 39;
+					else
+						body.front().position.x--;
+				}
+
+				body.front().rectMoveCnt++;
+				if (body.front().rectMoveCnt % 3 == 0)
+					body.front().moveState = (body.front().moveState & ~kRectWidth) | kRectHeight;
+				if (body.front().rectMoveCnt >= 6)
+				{
+					body.front().isPlus = body.front().isPlus ? false : true;
+					body.front().rectMoveCnt = 0;
 				}
 			}
-			else if (head.moveState & (kRect | kRectHeight))
+			else if (body.front().moveState & (kRectHeight))
 			{
-				head.isPlus ? head.position.y++ : head.position.y--;
-				head.rectMoveCnt++;
-				if (head.rectMoveCnt >= 3)
+				if (body.front().isPlus)
 				{
-					head.isPlus ? false : true;
-					head.moveState = head.moveState & ~kRectHeight | kRectWidth;
-					head.rectMoveCnt = 0;
+					if (body.front().position.y >= 39)
+						body.front().position.y = 0;
+					else
+						body.front().position.y++;
+				}
+				else
+				{
+					if (body.front().position.y <= 0)
+						body.front().position.y = 39;
+					else
+						body.front().position.y--;
+				}
+
+				body.front().rectMoveCnt++;
+				if (body.front().rectMoveCnt % 3 == 0)
+					body.front().moveState = body.front().moveState & ~kRectHeight | kRectWidth;
+				if (body.front().rectMoveCnt >= 6)
+				{
+					body.front().isPlus = body.front().isPlus ? false : true;
+					body.front().rectMoveCnt = 0;
 				}
 			}
 			break;
 		}
-		body.begin()->position = head.prevPosition;
-		for (auto& iter = ++body.begin(); iter != body.end(); ++iter)
-		{
-			iter->position = (--iter)->prevPosition; ++iter;
+		if(body.size() > 1 && body.front().moveState != kStop){
+			for (auto iter = (++body.begin()); iter != body.end(); ++iter)
+			{
+				iter->prevPosition = iter->position;
+				auto tmp = (--iter)->prevPosition; ++iter;
+				iter->position = tmp;
+			}
 		}
 	}
 
@@ -254,6 +355,7 @@ namespace ys
 					break;
 				}
 				uid(randomEngine) % 2 == 0 ? iter->isPlus = false : iter->isPlus = true;
+				iter->size = 100;
 				snakeList.push_back(std::list<Object>(1, *iter));
 				iter = feeds.erase(iter);
 			}
@@ -265,54 +367,61 @@ namespace ys
 
 	void SnakeGame::catchSnake()
 	{
-		for (auto iter = snakeList.begin() + 1; iter != snakeList.end();)//움직이는 뱀의 머리체크용 + player와 충돌체크 뱀
+		if(!(snakeList.begin() + 1)->empty())
 		{
-			for (auto inIter = snakeList.begin() + 1; inIter != snakeList.end();)//다른 뱀
+			for (auto iter = snakeList.begin() + 1; iter != snakeList.end();)//움직이는 뱀의 머리체크용 + player와 충돌체크 뱀
 			{
-				if (*inIter == *iter) continue;
-
-				auto collideIter = std::find(inIter->begin(), inIter->end(), [iter](Object& comp) {
-					return comp.position.x == iter->front().position.x && comp.position.y == iter->front().position.y;
-				});//뱀의 머리와 위치가 같은(충돌한) 다른 뱀의 몸통부분
-				if (inIter->end() != collideIter)
+				for (auto inIter = snakeList.begin() + 1; inIter != snakeList.end();)//다른 뱀
 				{
-					iter->splice(iter->begin(), *inIter, collideIter, inIter->end());//움직이는 뱀에 충돌한 부분부터 그 뱀의 끝부분까지 움직이는 뱀의 몸통 시작부분에 삽입
-					switch (uid(randomEngine) % 4)
+					if (*inIter == *iter)
 					{
-					case 0:
-						iter->front().moveState = kHorizon;
-						break;
-					case 1:
-						iter->front().moveState = kVertical;
-						break;
-					case 2:
-						iter->front().moveState = kRect;
-						break;
-					case 3:
-						iter->front().moveState = kStop;
-						break;
-					default:
-						break;
+						inIter++;
+						continue;
 					}
-					uid(randomEngine) % 2 == 0 ? iter->front().isPlus = false : iter->front().isPlus = true;
+
+					auto collideIter = std::find_if(inIter->begin(), inIter->end(), [iter](Object& comp) {
+						return comp.position.x == iter->front().position.x && comp.position.y == iter->front().position.y;
+						});//뱀의 머리와 위치가 같은(충돌한) 다른 뱀의 몸통부분
+					if (inIter->end() != collideIter)
+					{
+						iter->splice(++(iter->begin()), *inIter, collideIter, inIter->end());//움직이는 뱀에 충돌한 부분부터 그 뱀의 끝부분까지 움직이는 뱀의 몸통 시작부분에 삽입
+						switch (uid(randomEngine) % 4)
+						{
+						case 0:
+							iter->front().moveState = kHorizon;
+							break;
+						case 1:
+							iter->front().moveState = kVertical;
+							break;
+						case 2:
+							iter->front().moveState = kRect;
+							break;
+						case 3:
+							iter->front().moveState = kStop;
+							break;
+						default:
+							break;
+						}
+						uid(randomEngine) % 2 == 0 ? iter->front().isPlus = false : iter->front().isPlus = true;
+					}
+					if (inIter->empty())
+						inIter = snakeList.erase(inIter);//삭제되었으니 다음 iter를 찾아 그 iter로 다음진행
+					else
+						inIter++;//그냥 다음 iter진행
 				}
-				if (inIter->empty())
-					inIter = snakeList.erase(inIter);//삭제되었으니 다음 iter를 찾아 그 iter로 다음진행
+
+				auto& playerVal = player;
+				auto collideIter = std::find_if(iter->begin(), iter->end(), [playerVal](Object& comp) {
+					return comp.position.x == playerVal.position.x && comp.position.y == playerVal.position.y;
+					});//뱀의 머리와 위치가 같은(충돌한) 다른 뱀의 몸통부분
+				if (iter->end() != collideIter)
+					snakeList.front().splice(++(snakeList.front().begin()), *iter, collideIter, iter->end());//움직이는 뱀에 충돌한 부분부터 그 뱀의 끝부분까지
+				//움직이는 뱀의 몸통 시작부분에 삽입
+				if (iter->empty())
+					iter = snakeList.erase(iter);//삭제되었으니 다음 iter를 찾아 그 iter로 다음진행
 				else
-					inIter++;//그냥 다음 iter진행
+					iter++;//그냥 다음 iter진행
 			}
-			
-			auto& playerVal = player;
-			auto collideIter = std::find(iter->begin(), iter->end(), [playerVal](Object& comp) {
-				return comp.position.x == playerVal.position.x && comp.position.y == playerVal.position.y;
-			});//뱀의 머리와 위치가 같은(충돌한) 다른 뱀의 몸통부분
-			if (iter->end() != collideIter)
-				snakeList.front().splice(snakeList.front().begin(), *iter, collideIter, iter->end());//움직이는 뱀에 충돌한 부분부터 그 뱀의 끝부분까지
-																									//움직이는 뱀의 몸통 시작부분에 삽입
-			if (iter->empty())
-				iter = snakeList.erase(iter);//삭제되었으니 다음 iter를 찾아 그 iter로 다음진행
-			else
-				iter++;//그냥 다음 iter진행
 		}
 
 		//충돌 체크 헤드 - player, snakeList[index][0]
