@@ -94,6 +94,16 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		game.setScreen(rect);
 		break;
 	}
+	case WM_LBUTTONDOWN:
+	{
+		game.LButton(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		game.RButton(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
 	case WM_KEYDOWN:
 	{//이후 KF_ALTDOWN으로 Alt키 조합까지 구현가능
 		auto keyflags = HIWORD(lParam);
