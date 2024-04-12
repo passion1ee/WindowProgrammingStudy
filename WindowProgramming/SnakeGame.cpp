@@ -58,14 +58,17 @@ namespace ys
 
 	void SnakeGame::Run()
 	{
-		if (InputManager::getKeyUp((UINT)Key::S) || isRun) {
+		if (InputManager::getKeyUp((UINT)Key::S) || isRun)
+		{
 			Timer::Update();
-			if (InputManager::getKeyUp((UINT)Key::S)) {
+			if (InputManager::getKeyUp((UINT)Key::S))
+			{
 				setMoveTime = 2 / Timer::getRealFPS();
 				isRun = isRun ? false : true;
 			}
 			moveCoolTime += Timer::getDeltaTime();
-			if (1 / Timer::getRealFPS() - speed <= (frameCheck += Timer::getDeltaTime())) {
+			if (1 / Timer::getRealFPS() - speed <= (frameCheck += Timer::getDeltaTime()))
+			{
 				InputManager::BeforeUpdate();
 				frameCheck = 0.0f;
 				Update();

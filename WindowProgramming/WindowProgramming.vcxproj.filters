@@ -13,57 +13,84 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\PRACTICE_2">
+      <UniqueIdentifier>{273e2cdb-934c-40a5-981c-374fdc2d8681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\PRACTICE_3">
+      <UniqueIdentifier>{013aff18-54c7-4294-ba71-3612d325d0d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_2">
+      <UniqueIdentifier>{9002c82a-9145-4e41-87e2-bd0414bf0c7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_3">
+      <UniqueIdentifier>{3de7a8e1-5a11-4202-b756-d77df1d21647}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="RandomShape.cpp">
+    <ClCompile Include="main2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TextEditor.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="RandomShape.cpp">
+      <Filter>소스 파일\PRACTICE_2</Filter>
     </ClCompile>
     <ClCompile Include="selectShape.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\PRACTICE_2</Filter>
+    </ClCompile>
+    <ClCompile Include="TextEditor.cpp">
+      <Filter>소스 파일\PRACTICE_2</Filter>
+    </ClCompile>
+    <ClCompile Include="ysDigitAlphaPlus.cpp">
+      <Filter>소스 파일\PRACTICE_2</Filter>
     </ClCompile>
     <ClCompile Include="ysInputShape.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\PRACTICE_2</Filter>
     </ClCompile>
     <ClCompile Include="ysRigidbodyGame.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\PRACTICE_2</Filter>
     </ClCompile>
     <ClCompile Include="ysShapeLand.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\PRACTICE_2</Filter>
     </ClCompile>
     <ClCompile Include="ysWordPuzzle.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\PRACTICE_2</Filter>
+    </ClCompile>
+    <ClCompile Include="SnakeGame.cpp">
+      <Filter>소스 파일\PRACTICE_3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RandomShape.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TextEditor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="selectShape.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ysInputShape.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ysRigidbodyGame.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="stdfax.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="RandomShape.h">
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
+    <ClInclude Include="selectShape.h">
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEditor.h">
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
+    <ClInclude Include="ysDigitAlphaPlus.h">
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
+    <ClInclude Include="ysInputShape.h">
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
+    <ClInclude Include="ysRigidbodyGame.h">
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
     <ClInclude Include="ysShapeLand.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\PRACTICE_2</Filter>
     </ClInclude>
     <ClInclude Include="ysWordPuzzle.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\PRACTICE_2</Filter>
+    </ClInclude>
+    <ClInclude Include="SnakeGame.h">
+      <Filter>헤더 파일\PRACTICE_3</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
