@@ -6,7 +6,7 @@ class Brick
 public:
 	Brick(const RECT& rect, int hp, bool isAct);
 
-	void Update(bool isStop);
+	void Update();
 	void Render(HDC hdc);
 	
 	bool CheckCollision(Ball& ball);

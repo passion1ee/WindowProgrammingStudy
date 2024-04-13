@@ -26,7 +26,6 @@ namespace ys
 		float isCoolTime;
 		float frameCheck;
 		bool isRun;
-		bool isStop;
 
 		Ball player;
 		BrickManager Bricks;

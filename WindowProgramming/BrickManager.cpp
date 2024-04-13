@@ -22,12 +22,12 @@ void BrickManager::Init(const int& quantity, const RECT& screenSize)
 	}
 }
 
-void BrickManager::Update(bool isStop)
+void BrickManager::Update()
 {
 	for (auto& brick : bricks)
 	{
 		if (!brick.isActive()) continue;
-		brick.Update(isStop);
+		brick.Update();
 	}
 }
 

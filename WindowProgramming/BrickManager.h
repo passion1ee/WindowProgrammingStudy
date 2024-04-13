@@ -8,7 +8,7 @@ class BrickManager
 {
 public:
 	void Init(const int& quantity, const RECT& screenSize);
-	void Update(bool isStop);
+	void Update();
 	void Render(HDC hdc);
 
 	bool CheckCollision(Ball& ball);

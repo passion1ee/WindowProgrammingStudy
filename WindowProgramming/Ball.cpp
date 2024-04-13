@@ -1,6 +1,6 @@
 #include "Ball.h"
 #include "stdfax.h"
-constexpr BYTE scalar = 10;
+constexpr BYTE scalar = 100;
 
 Ball::Ball() : position({ 0.0, 0.0 }), Direction({ 0, 0 }), velocity(0), size(10) {}
 
@@ -12,18 +12,10 @@ void Ball::Init(ys::fVector position_)
 	size = 30;
 }
 
-void Ball::Update(RECT& clientRect, bool isStop)
+void Ball::Update(RECT& clientRect)
 {
-	if (isStop)
-	{
-		position.x += 1 / ys::Timer::getRealFPS() * Direction.x * scalar * velocity;
-		position.y += 1 / ys::Timer::getRealFPS() * Direction.y * scalar * velocity;
-	}
-	else
-	{
-		position.x += Direction.x * scalar * velocity;
-		position.y += Direction.y * scalar * velocity;
-	}
+	position.x += 1 / ys::Timer::getRealFPS() * Direction.x * scalar * velocity;
+	position.y += 1 / ys::Timer::getRealFPS() * Direction.y * scalar * velocity;
 
 	if (ys::InputManager::getKey(VK_ADD))
 	{

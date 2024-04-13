@@ -2,21 +2,15 @@
 
 Brick::Brick(const RECT& rect, int hp, bool isAct) : rect(rect), maxHp(hp), hp(hp), isAct(isAct) {}
 
-void Brick::Update(bool isStop)
+void Brick::Update()
 {
 	if (ys::InputManager::getKey(VK_LBUTTON))
 	{
-		if(!isStop)
-			OffsetRect(&rect, (1 / ys::Timer::getRealFPS()) * -300, 0);
-		else
-			OffsetRect(&rect, -300, 0);
+		OffsetRect(&rect, (1 / ys::Timer::getRealFPS()) * -300, 0);
 	}
 	if (ys::InputManager::getKey(VK_RBUTTON))
 	{
-		if(!isStop)
-			OffsetRect(&rect, (1 / ys::Timer::getRealFPS()) * 300, 0);
-		else
-			OffsetRect(&rect, 300, 0);
+		OffsetRect(&rect, (1 / ys::Timer::getRealFPS()) * 300, 0);
 	}
 }
 

@@ -7,7 +7,7 @@ public:
 	Ball();
 
 	void Init(ys::fVector position_);
-	void Update(RECT& clientRect, bool isStop);
+	void Update(RECT& clientRect);
 	void Render(HDC hdc);
 	//bool CheckCollision(Brick& brick);
 
