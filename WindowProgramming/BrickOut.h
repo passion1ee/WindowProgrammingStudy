@@ -13,15 +13,17 @@ namespace ys
 		void Update();
 		void Render();
 
-		void setScreen(RECT& screenSize);
+		void setScreen(RECT screenSize);
 	private:
 		HWND hWnd;
 		HDC hDC;
 		HDC hBackDC;
 		HBITMAP hBitmap;
 
+		RECT defaultScreen;
 		RECT screen;
 
+		float isCoolTime;
 		float frameCheck;
 		bool isRun;
 		bool isStop;

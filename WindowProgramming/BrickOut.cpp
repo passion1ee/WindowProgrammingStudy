@@ -3,12 +3,13 @@
 
 namespace ys
 {
-	void BrickOut::setScreen(RECT& screenSize)
+	void BrickOut::setScreen(RECT screenSize)
 	{
+		defaultScreen = screenSize;
 		::AdjustWindowRect(&screenSize, WS_OVERLAPPEDWINDOW, FALSE);
 		screen = screenSize;
 
-		SetWindowPos(hWnd, nullptr, 0, 0, screen.right - screen.left, screen.bottom - screen.top, 0);
+		SetWindowPos(hWnd, nullptr, 0, 0, screen.right - screen.left, screen.bottom - screen.top, SWP_NOMOVE | SWP_NOZORDER);
 
 		hBitmap = CreateCompatibleBitmap(hDC, screen.right - screen.left, screen.bottom - screen.top);
 		auto oldBitmap = SelectObject(hBackDC, hBitmap);
@@ -22,8 +23,9 @@ namespace ys
 		hBackDC = CreateCompatibleDC(hDC);
 
 		BrickOut::setScreen(screenSize);
+		isStop = false;
 		Bricks.Init(60, screen);
-		player.Init(fVector((screen.right - screen.left) / 2.0, screen.top));
+		player.Init(fVector(screen.right / 2.0, 0));
 		Timer::Init();
 	}
 
@@ -44,29 +46,36 @@ namespace ys
 			{
 				InputManager::BeforeUpdate();
 				frameCheck -= 1 / Timer::getRealFPS();
+				if(isCoolTime > 0.0f)
+					isCoolTime -= 1 / Timer::getRealFPS();
 				Update();
 				Render();
 				Timer::Render(hDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
 				InputManager::AfterUpdate();
 			}
 		}
-		else if (isStop)
+		else if (InputManager::getKeyUp((UINT)Key::P) || isStop)
 		{
+			PatBlt(hBackDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, WHITENESS);
 			std::wstring line;
-			line += L"색이 변한 벽돌의 개수: " + std::to_wstring(Bricks.CountInAct().first) + L", 없어진 개수: " + std::to_wstring(Bricks.CountInAct().second);
-			SIZE size;  GetTextExtentPoint32(hDC, line.c_str(), line.size(), &size);
+			auto& tmp = Bricks.CountInAct();
+			line += L"색이 변한 벽돌의 개수: " + std::to_wstring(tmp.first) + L", 없어진 개수: " + std::to_wstring(tmp.second);
+			SIZE size;  GetTextExtentPoint32(hBackDC, line.c_str(), line.size(), &size);
 			TextOut(hBackDC, (screen.right - screen.left) / 2 - size.cx, (screen.bottom - screen.top) / 2, line.c_str(), line.size());
+			BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
 		}
 	}
 
 	void BrickOut::Update()
 	{
-		Bricks.Update();
-		player.Update(screen);
+		Bricks.Update(isStop);
+		player.Update(screen, isStop);
+		if (isCoolTime <= 0.0f)
+			Bricks.CheckCollision(player) ? isCoolTime = 1 / Timer::getRealFPS() : isCoolTime = 0.0f;
 
 		if (ys::InputManager::getKeyUp((UINT)ys::Key::N))
 		{
-			Init(hWnd, screen);
+			Init(hWnd, defaultScreen);
 		}
 		if (ys::InputManager::getKeyUp((UINT)ys::Key::Q))
 		{

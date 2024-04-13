@@ -184,10 +184,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	::RegisterClassEx(&WndClass);
 
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
+		CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
 
-	ys::InputManager::Init();
 	game.Init(hWnd, windowRect);
+	ys::InputManager::Init();
 
 	::ShowWindow(hWnd, nShowCmd);
 	::UpdateWindow(hWnd);

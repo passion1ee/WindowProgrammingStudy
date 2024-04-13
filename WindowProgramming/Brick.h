@@ -6,10 +6,10 @@ class Brick
 public:
 	Brick(const RECT& rect, int hp, bool isAct);
 
-	void Update();
+	void Update(bool isStop);
 	void Render(HDC hdc);
 	
-	void CheckCollision(Ball& ball);
+	bool CheckCollision(Ball& ball);
 
 	const bool& isActive() const { return isAct; }
 	void InActive() { isAct = false; }
@@ -20,5 +20,5 @@ private:
 	RECT rect;
 	const int maxHp;
 	int hp;
-	bool isAct;	
+	bool isAct;
 };

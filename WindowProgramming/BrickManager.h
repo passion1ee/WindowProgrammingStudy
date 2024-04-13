@@ -8,10 +8,10 @@ class BrickManager
 {
 public:
 	void Init(const int& quantity, const RECT& screenSize);
-	void Update();
+	void Update(bool isStop);
 	void Render(HDC hdc);
 
-	void CheckCollision(Ball& ball);
+	bool CheckCollision(Ball& ball);
 	const std::pair<int, int>& CountInAct() const;
 private:
 	std::vector<Brick> bricks; // 모든 벽돌 관리

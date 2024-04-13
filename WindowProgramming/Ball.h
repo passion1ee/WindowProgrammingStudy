@@ -7,20 +7,31 @@ public:
 	Ball();
 
 	void Init(ys::fVector position_);
-	void Update(RECT& clientRect);
+	void Update(RECT& clientRect, bool isStop);
 	void Render(HDC hdc);
+	//bool CheckCollision(Brick& brick);
 
-	void setVelocity(ys::fVector val) 
+	void setDirection(ys::fVector val)
 	{
-		velocity.x = val.x;
-		velocity.y = val.y;
+		Direction.x = val.x;
+		Direction.y = val.y;
+	}
+	void setDirection(float xVal, float yVal)
+	{
+		Direction.x = xVal;
+		Direction.y = yVal;
+	}
+	void setPosition(float xVal, float yVal) {
+		position.x = xVal;
+		position.y = yVal;
 	}
 
-	ys::fVector& getVelocity() { return velocity; }
+	const int& getSize() const { return size; }
+	ys::fVector& getDirection() { return Direction; }
 	const ys::fVector& getPosition() const { return position; }
 private:
 	ys::fVector position;
 	ys::fVector Direction;
-	ys::fVector velocity;
+	float velocity;
 	int size;
 };
