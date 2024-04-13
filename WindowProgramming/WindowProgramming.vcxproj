@@ -155,8 +155,10 @@
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="ysDigitAlphaPlus.cpp" />
     <ClCompile Include="ysInputShape.cpp" />
+    <ClCompile Include="ysObserver.cpp" />
     <ClCompile Include="ysRigidbodyGame.cpp" />
     <ClCompile Include="ysShapeLand.cpp" />
+    <ClCompile Include="ysSubject.cpp" />
     <ClCompile Include="ysWordPuzzle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +172,11 @@
     <ClInclude Include="TextEditor.h" />
     <ClInclude Include="ysDigitAlphaPlus.h" />
     <ClInclude Include="ysInputShape.h" />
+    <ClInclude Include="ysObserver.h" />
     <ClInclude Include="ysRigidbodyGame.h" />
     <ClInclude Include="stdfax.h" />
     <ClInclude Include="ysShapeLand.h" />
+    <ClInclude Include="ysSubject.h" />
     <ClInclude Include="ysWordPuzzle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
