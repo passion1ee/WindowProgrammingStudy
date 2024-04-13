@@ -25,6 +25,12 @@
     <Filter Include="헤더 파일\PRACTICE_3">
       <UniqueIdentifier>{3de7a8e1-5a11-4202-b756-d77df1d21647}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\PRACTICE_3\PRACTICE_3_2">
+      <UniqueIdentifier>{ac74f8d1-bfcf-4c33-be11-058fbd6c1d99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_2">
+      <UniqueIdentifier>{336bb836-a09a-4aa6-8882-49d2f27071fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -60,6 +66,18 @@
     <ClCompile Include="SnakeGame.cpp">
       <Filter>소스 파일\PRACTICE_3</Filter>
     </ClCompile>
+    <ClCompile Include="BrickOut.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Ball.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClCompile>
+    <ClCompile Include="BrickManager.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Brick.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdfax.h">
@@ -91,6 +109,18 @@
     </ClInclude>
     <ClInclude Include="SnakeGame.h">
       <Filter>헤더 파일\PRACTICE_3</Filter>
+    </ClInclude>
+    <ClInclude Include="Ball.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClInclude>
+    <ClInclude Include="BrickOut.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClInclude>
+    <ClInclude Include="BrickManager.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

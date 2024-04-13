@@ -143,6 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Brick.cpp" />
+    <ClCompile Include="BrickManager.cpp" />
+    <ClCompile Include="BrickOut.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main2.cpp" />
     <ClCompile Include="RandomShape.cpp" />
@@ -156,6 +160,10 @@
     <ClCompile Include="ysWordPuzzle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ball.h" />
+    <ClInclude Include="Brick.h" />
+    <ClInclude Include="BrickManager.h" />
+    <ClInclude Include="BrickOut.h" />
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="SnakeGame.h" />

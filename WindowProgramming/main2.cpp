@@ -146,10 +146,10 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__3_2
 #include <windowsx.h>
-#include "brickOut.h"
+#include "BrickOut.h"
 
-ys::SnakeGame game;
-RECT windowRect{ 0, 0, 1200 , 1200 };
+ys::BrickOut game;
+RECT windowRect{ 0, 0, 16 * 80, 9 * 80 };
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -219,21 +219,24 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		lpMMI->ptMinTrackSize.y = windowRect.bottom - windowRect.top;
 		break;
 	}
-	case WM_SIZE:
-	{
-		RECT rect;
-		GetClientRect(hWnd, &rect);
-		game.setScreen(rect);
-		break;
-	}
 	case WM_LBUTTONDOWN:
 	{
-		game.LButton(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		ys::InputManager::setKeyState(VK_LBUTTON, FALSE, FALSE);
 		break;
 	}
 	case WM_RBUTTONDOWN:
 	{
-		game.RButton(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		ys::InputManager::setKeyState(VK_RBUTTON, FALSE, FALSE);
+		break;
+	}
+	case WM_LBUTTONUP:
+	{
+		ys::InputManager::setKeyState(VK_LBUTTON, KF_REPEAT, KF_UP);
+		break;
+	}
+	case WM_RBUTTONUP:
+	{
+		ys::InputManager::setKeyState(VK_RBUTTON, KF_REPEAT, KF_UP);
 		break;
 	}
 	case WM_KEYDOWN:

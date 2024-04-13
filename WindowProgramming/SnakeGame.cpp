@@ -73,7 +73,7 @@ namespace ys
 				frameCheck = 0.0f;
 				Update();
 				Render();
-				Timer::Rander(hDC, screen);
+				Timer::Render(hDC, screen);
 				InputManager::AfterUpdate();
 			}
 		}
