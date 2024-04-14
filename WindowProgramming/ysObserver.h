@@ -1,15 +1,15 @@
 #pragma once
+#include "stdfax.h"
+#include <Windows.h>
+
 namespace ys
 {
-	enum class TrffLightSignal
-	{
-		RED, REDtoYELLOW, GREENtoYELLOW, GREEN
-	};
+	
 
 	class Observer
 	{
 	public:
 		virtual ~Observer() {}
-		virtual void Update(TrffLightSignal signal, RECT screen) = 0;
+		virtual void Update(ys::TrffLightSignal signal, RECT screen) = 0;
 	};
 }

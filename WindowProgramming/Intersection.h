@@ -7,14 +7,34 @@ namespace ys
 	class Intersection
 	{
 	public:
-		void Init();
-		void Update();
+		void setScreen(RECT screenSize);
+		void Init(HWND hWnd_, RECT screenSize);
+		void Run();
 		void Render();
 
+	public:
+		void click(int x, int y);
+
 	private:
+		void Update();
+		inline void KeyUpdate();
+		void renderFrame(HDC hdc);
+		
+	private:
+		HWND hWnd;
+		HDC hDC;
+		HDC hBackDC;
+		HBITMAP hBitmap;
+
+		RECT screen;
+
+		float frameCheck;
+		float trafficTime;
+		bool isAuto;
+
 		TrafficLight horizontalTL;
 		TrafficLight verticalTL;
-		std::vector<std::shared_ptr<Car>> cars;
 	};
+	
 }
 

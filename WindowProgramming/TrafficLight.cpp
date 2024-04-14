@@ -3,8 +3,9 @@
 
 void TrafficLight::Notify(RECT screen)
 {
-	for (auto observer : observers)
+	for (auto& observer : observers)
 	{
 		observer->Update(state, screen);
 	}
 }
+

@@ -1,215 +1,288 @@
 #include "CarState.h"
 #include "Car.h"
 
-void HorizontalMove::Move(Car* car, RECT screen)
+void HorizontalMove::Move(Car& car, RECT screen)
 {
-	ys::fVector tmp = car->getPosition();
-	tmp.x += (1 / ys::Timer::getRealFPS()) * car->getVelocity().x;
-	car->setPosition(tmp);
+	ys::fVector tmp = car.getPosition();
+	tmp.x += (1 / ys::Timer::getRealFPS()) * car.getVelocity().x;
+	car.setPosition(tmp);
 
 	float width = screen.right - screen.left;
-	if(car->getPosition().x > width)
+	if(car.getPosition().x > width)
 	{
 		tmp.x = 0;
-		car->setPosition(tmp);
+		car.setPosition(tmp);
 	}
 }
 
-void HorizontalMove::StopAccel(Car* car)
+void HorizontalMove::StopAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.x -= dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.x > dSpeed)
+		tmp.x -= dSpeed;
+	else
+		tmp.x = 0.0f;
+	car.setVelocity(tmp);
 }
 
-void HorizontalMove::MoveAccel(Car* car)
+void HorizontalMove::MoveAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.x += dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.x < car.getSpeed() - dSpeed)
+		tmp.x += dSpeed;
+	else
+		tmp.x = car.getSpeed();
+	car.setVelocity(tmp);
 }
 
-void HorizontalMove::Accel(Car* car)
+void HorizontalMove::Accel(Car& car)
 {
-	car->setSpeed(car->getSpeed() + 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x + 10.0f, tmp.y });
+	car.setSpeed(car.getSpeed() + 10.0f);
+	auto tmp = car.getVelocity();
+	car.setVelocity({ tmp.x + 10.0f, tmp.y });
 }
 
-void HorizontalMove::Decel(Car* car)
+void HorizontalMove::Decel(Car& car)
 {
-	car->setSpeed(car->getSpeed() - 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x - 10.0f, tmp.y });
+	auto tmp = car.getVelocity();
+	if (tmp.x > 10.0f)
+	{
+		car.setSpeed(car.getSpeed() - 10.0f);
+		car.setVelocity({ tmp.x - 10.0f, tmp.y });
+	}
 }
 
-void HorizontalMove::Render(HDC hdc, Car* car, RECT screen)
+void HorizontalMove::Render(HDC hdc, Car& car, RECT screen)
 {
-	auto position = car->getPosition();
-	auto size = car->getSize();
+	auto position = car.getPosition();
+	auto size = car.getSize();
 	float width = screen.right - screen.left;
 
-	if(position.x + size > width)
+	if(position.x >= 0 && position.x + size <= width)//윈도우 속
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+
+	if(position.x + size > width)//끝 도달
 	{
 		auto overflow = (position.x + size) - width;
 		Rectangle(hdc, 0, position.y, overflow, position.y + size);
 		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
-
 	}
-	if(position.x >= 0 && position.x + size <= width)
-	Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void HorizontalReverseMove::Move(Car* car, RECT screen)
+void HorizontalReverseMove::Move(Car& car, RECT screen)
 {
-	ys::fVector tmp = car->getPosition();
-	tmp.x += (1 / ys::Timer::getRealFPS()) * car->getVelocity().x;
-	car->setPosition(tmp);
+	ys::fVector tmp = car.getPosition();
+	tmp.x += (1 / ys::Timer::getRealFPS()) * car.getVelocity().x;
+	car.setPosition(tmp);
 
-	if (car->getPosition().x < 0)
+	if (car.getPosition().x < 0)
 	{
 		float width = screen.right - screen.left;
 		tmp.x = width;
-		car->setPosition(tmp);
+		car.setPosition(tmp);
 	}
 }
 
-void HorizontalReverseMove::StopAccel(Car* car)
+void HorizontalReverseMove::StopAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.x += dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.x < dSpeed)
+		tmp.x += dSpeed;
+	else
+		tmp.x = 0.0f;
+	car.setVelocity(tmp);
 }
 
-void HorizontalReverseMove::MoveAccel(Car* car)
+void HorizontalReverseMove::MoveAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.x -= dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.x >= -car.getSpeed() + dSpeed)
+		tmp.x -= dSpeed;
+	else
+		tmp.x = -car.getSpeed();
+	car.setVelocity(tmp);
 }
 
-void HorizontalReverseMove::Accel(Car* car)
+void HorizontalReverseMove::Accel(Car& car)
 {
-	car->setSpeed(car->getSpeed() - 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x - 10.0f, tmp.y });
+	car.setSpeed(car.getSpeed() - 10.0f);
+	auto tmp = car.getVelocity();
+	car.setVelocity({ tmp.x - 10.0f, tmp.y });
 }
 
-void HorizontalReverseMove::Decel(Car* car)
+void HorizontalReverseMove::Decel(Car& car)
 {
-	car->setSpeed(car->getSpeed() + 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x + 10.0f, tmp.y });
+	auto tmp = car.getVelocity();
+	if (tmp.x < -10.0f)
+	{
+		car.setSpeed(car.getSpeed() + 10.0f);
+		car.setVelocity({ tmp.x + 10.0f, tmp.y });
+	}
 }
 
-void HorizontalReverseMove::Render(HDC hdc, Car* car, RECT screen)
+void HorizontalReverseMove::Render(HDC hdc, Car& car, RECT screen)
 {
-	
+	auto position = car.getPosition();
+	auto size = car.getSize();
+	float width = screen.right - screen.left;
+
+	if (position.x >= 0 && position.x + size <= width)//윈도우 속
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+
+	if (position.x + size > width)//끝 도달
+	{
+		auto overflow = (position.x + size) - width;
+		Rectangle(hdc, 0, position.y, overflow, position.y + size);
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void VerticalMove::Move(Car* car, RECT screen)
+void VerticalMove::Move(Car& car, RECT screen)
 {
-	ys::fVector tmp = car->getPosition();
-	tmp.y += (1 / ys::Timer::getRealFPS()) * car->getVelocity().y;
-	car->setPosition(tmp);
+	ys::fVector tmp = car.getPosition();
+	tmp.y += (1 / ys::Timer::getRealFPS()) * car.getVelocity().y;
+	car.setPosition(tmp);
 
 	float height = screen.bottom - screen.top;
-	if (car->getPosition().y > height)
+	if (car.getPosition().y > height)
 	{
 		tmp.y = 0;
-		car->setPosition(tmp);
+		car.setPosition(tmp);
 	}
 }
 
-void VerticalMove::StopAccel(Car* car)
+void VerticalMove::StopAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.y -= dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.y > dSpeed)
+		tmp.y -= dSpeed;
+	else
+		tmp.y = 0;
+	car.setVelocity(tmp);
 }
 
-void VerticalMove::MoveAccel(Car* car)
+void VerticalMove::MoveAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.y += dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.y < car.getSpeed() - dSpeed)
+		tmp.y += dSpeed;
+	else
+		tmp.y = car.getSpeed();
+	car.setVelocity(tmp);
 }
 
-void VerticalMove::Accel(Car* car)
+void VerticalMove::Accel(Car& car)
 {
-	car->setSpeed(car->getSpeed() + 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x, tmp.y + 10.0f});
+	car.setSpeed(car.getSpeed() + 10.0f);
+	auto tmp = car.getVelocity();
+	car.setVelocity({ tmp.x, tmp.y + 10.0f});
 }
 
-void VerticalMove::Decel(Car* car)
+void VerticalMove::Decel(Car& car)
 {
-	car->setSpeed(car->getSpeed() - 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x, tmp.y - 10.0f });
+	auto tmp = car.getVelocity();
+	if (tmp.y > 10.0f)
+	{
+		car.setSpeed(car.getSpeed() - 10.0f);
+		car.setVelocity({ tmp.x, tmp.y - 10.0f });
+	}
 }
 
-void VerticalMove::Render(HDC hdc, Car* car, RECT screen)
+void VerticalMove::Render(HDC hdc, Car& car, RECT screen)
 {
+	auto position = car.getPosition();
+	auto size = car.getSize();
+	float height = screen.bottom - screen.top;
+
+	if (position.y >= 0 && position.y + size <= height)//윈도우 속
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+
+	if (position.y + size > height)//끝 도달
+	{
+		auto overflow = (position.y + size) - height;
+		Rectangle(hdc, position.x, 0, position.x + size, overflow);
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void VerticalReverseMove::Move(Car* car, RECT screen)
+void VerticalReverseMove::Move(Car& car, RECT screen)
 {
-	ys::fVector tmp = car->getPosition();
-	tmp.y += (1 / ys::Timer::getRealFPS()) * car->getVelocity().y;
-	car->setPosition(tmp);
+	ys::fVector tmp = car.getPosition();
+	tmp.y += (1 / ys::Timer::getRealFPS()) * car.getVelocity().y;
+	car.setPosition(tmp);
 
-	if (car->getPosition().y < 0)
+	if (car.getPosition().y < 0)
 	{
 		float height = screen.bottom - screen.top;
-		tmp.x = height;
-		car->setPosition(tmp);
+		tmp.y = height;
+		car.setPosition(tmp);
 	}
 }
 
-void VerticalReverseMove::StopAccel(Car* car)
+void VerticalReverseMove::StopAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.y += dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.y < dSpeed)
+		tmp.y += dSpeed;
+	else
+		tmp.y = 0.0f;
+	car.setVelocity(tmp);
 }
 
-void VerticalReverseMove::MoveAccel(Car* car)
+void VerticalReverseMove::MoveAccel(Car& car)
 {
-	ys::fVector tmp = car->getVelocity();
-	auto dSpeed = car->getSpeed() / (1 / ys::Timer::getRealFPS());
-	tmp.y -= dSpeed;
-	car->setVelocity(tmp);
+	ys::fVector tmp = car.getVelocity();
+	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	if (tmp.y >= -car.getSpeed() + dSpeed)
+		tmp.y -= dSpeed;
+	else
+		tmp.y = -car.getSpeed();
+	car.setVelocity(tmp);
 }
 
-void VerticalReverseMove::Accel(Car* car)
+void VerticalReverseMove::Accel(Car& car)
 {
-	car->setSpeed(car->getSpeed() - 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x, tmp.y - 10.0f });
+	car.setSpeed(car.getSpeed() - 10.0f);
+	auto tmp = car.getVelocity();
+	car.setVelocity({ tmp.x, tmp.y - 10.0f });
 }
 
-void VerticalReverseMove::Decel(Car* car)
+void VerticalReverseMove::Decel(Car& car)
 {
-	car->setSpeed(car->getSpeed() + 10.0f);
-	auto tmp = car->getVelocity();
-	car->setVelocity({ tmp.x, tmp.y + 10.0f });
+	auto tmp = car.getVelocity();
+	if (tmp.y < -10.0f)
+	{
+		car.setSpeed(car.getSpeed() + 10.0f);
+		car.setVelocity({ tmp.x, tmp.y + 10.0f });
+	}
 }
 
-void VerticalReverseMove::Render(HDC hdc, Car* car, RECT screen)
+void VerticalReverseMove::Render(HDC hdc, Car& car, RECT screen)
 {
-}
+	auto position = car.getPosition();
+	auto size = car.getSize();
+	float height = screen.bottom - screen.top;
 
+	if (position.y >= 0 && position.y + size <= height)//윈도우 속
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+
+	if (position.y + size > height)//끝 도달
+	{
+		auto overflow = (position.y + size) - height;
+		Rectangle(hdc, position.x, 0, position.x + size, overflow);
+		Rectangle(hdc, position.x, position.y, position.x + size, position.y + size);
+	}
+}

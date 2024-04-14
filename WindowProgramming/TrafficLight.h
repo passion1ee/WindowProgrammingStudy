@@ -10,17 +10,25 @@ class TrafficLight : public ys::Subject
 {
 public:
 	TrafficLight() : state(ys::TrffLightSignal::GREENtoYELLOW), position(RECT()) {}
+	TrafficLight(const std::list<std::shared_ptr<ys::Observer>>& observers, const ys::TrffLightSignal& state, const RECT& position)
+		: observers(observers), state(state), position(position) {}
 
-	virtual void Attach(ys::Observer* observer) override
+	virtual void Attach(std::shared_ptr<ys::Observer> observer) override
 	{
 		observers.push_back(observer);
 	}
-	virtual void Detach(ys::Observer* observer) override
+	virtual void Detach(std::shared_ptr<ys::Observer> observer) override
 	{
 		observers.remove(observer);
 	}
 
+	void Clear()
+	{
+		observers.clear();
+	}
+
 	virtual void Notify(RECT screen) override;
+
 	void SetState(ys::TrffLightSignal signal, RECT screen)
 	{
 		state = signal;
@@ -29,7 +37,8 @@ public:
 	ys::TrffLightSignal GetState() const { return state; }
 
 private:
-	std::list<ys::Observer*> observers;
+	std::list<std::shared_ptr<ys::Observer>> observers;
 	ys::TrffLightSignal state;
 	RECT position;
 };
+

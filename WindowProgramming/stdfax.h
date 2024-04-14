@@ -5,6 +5,11 @@
 
 namespace ys
 {
+	enum class TrffLightSignal
+	{
+		RED, GREENtoYELLOW, GREEN
+	};
+
 	struct fVector
 	{
 		float x;

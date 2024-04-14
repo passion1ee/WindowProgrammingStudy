@@ -144,7 +144,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #endif // PRACTICE__3_1
 
-
 #ifdef PRACTICE__3_2
 #include <windowsx.h>
 #include "BrickOut.h"
@@ -281,9 +280,9 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #ifdef PRACTICE__3_3
 
 #include <windowsx.h>
-#include ".h"
+#include "Intersection.h"
 
-ys:: game;
+ys::Intersection game;
 RECT windowRect{ 0, 0, 16 * 80, 9 * 80 };
 
 HINSTANCE g_hInst;
@@ -355,32 +354,13 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		break;
 	}case WM_LBUTTONDOWN:
 	{
-		game.setMousePosition(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		game.setMousePosition(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
-	}
-	case WM_LBUTTONDOWN:
-	{
+		game.click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		ys::InputManager::setKeyState(VK_LBUTTON, FALSE, FALSE);
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		ys::InputManager::setKeyState(VK_RBUTTON, FALSE, FALSE);
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
 		ys::InputManager::setKeyState(VK_LBUTTON, KF_REPEAT, KF_UP);
-		break;
-	}
-	case WM_RBUTTONUP:
-	{
-		ys::InputManager::setKeyState(VK_RBUTTON, KF_REPEAT, KF_UP);
 		break;
 	}
 	case WM_KEYDOWN:

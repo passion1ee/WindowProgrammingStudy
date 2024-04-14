@@ -3,16 +3,19 @@
 #include "CarState.h"
 #include "stdfax.h"
 #include <Windows.h>
+#include "ysSubject.h"
 
 class Car : public ys::Observer
 {
 public:
+	Car() = default;
 
-	void Init();
-	virtual void Update(ys::TrffLightSignal signal, RECT screen) override;
+public:
+	void Init(const std::shared_ptr<CarState>& myState, const ys::fVector& position, const ys::fVector& velocity);
+	virtual void Update(ys::TrffLightSignal signal, RECT screen) final;
 	void Render(HDC hdc, RECT screen);
 
-	void setState(CarState* state_) { myState = state_; }
+	void setState(std::shared_ptr <CarState> state_) { myState = state_; }
 
 	void setVelocity(ys::fVector val) { velocity = val; }
 	ys::fVector getVelocity() const { return velocity; }
@@ -25,18 +28,17 @@ public:
 	float getSize() const { return size; }
 
 	void Stop();
-	void Move(RECT screen) { if (myState) myState->Move(this, screen); }
-	void StopAccel() { if (myState) myState->StopAccel(this); }
-	void MoveAccel() { if (myState) myState->MoveAccel(this); }
-	void Accel() { if (myState) myState->Accel(this); }
-	void Decel() { if (myState) myState->Decel(this); }
+	void Move(Car& car, RECT screen) { if (myState) myState->Move(car, screen); }
+	void StopAccel(Car& car) { if (myState) myState->StopAccel(car); }
+	void MoveAccel(Car& car) { if (myState) myState->MoveAccel(car); }
+	void Accel(Car& car) { if (myState) myState->Accel(car); }
+	void Decel(Car& car) { if (myState) myState->Decel(car); }
 
 private:
-	CarState* myState;
+	std::shared_ptr <CarState> myState;
 	BYTE size;
 
 	ys::fVector position;
 	ys::fVector velocity;// H(1, 0)rH(-1, 0), V(0, 1)rV(0, -1)
 	float maxSpeed;
 };
-//+ - maxSpeed도 올리고 velocity도 올리고

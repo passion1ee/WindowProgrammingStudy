@@ -1,4 +1,6 @@
 #pragma once
+#include "stdfax.h"
+#include <Windows.h>
 
 namespace ys
 {
@@ -8,8 +10,8 @@ namespace ys
 	{
 	public:
 		virtual ~Subject() {}
-		virtual void Attach(Observer* observer) = 0;
-		virtual void Detach(Observer* observer) = 0;
+		virtual void Attach(std::shared_ptr<ys::Observer> observer) = 0;
+		virtual void Detach(std::shared_ptr<ys::Observer> observer) = 0;
 		virtual void Notify(RECT screen) = 0;
 	};
 }
