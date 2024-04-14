@@ -4,7 +4,6 @@
 
 void Car::Init(const std::shared_ptr<CarState>& myState, const ys::fVector& position, const ys::fVector& velocity)
 {
-	size = 20;
 	this->myState = myState;
 	this->position = position;
 	this->velocity = velocity;
@@ -20,13 +19,16 @@ void Car::Update(ys::TrffLightSignal signal, RECT screen)
 	{
 	case ys::TrffLightSignal::RED:
 		Stop();
-		MoveAccel(*this);
 		break;
 	case ys::TrffLightSignal::GREENtoYELLOW:
 		StopAccel(*this);
+		Move(*this, screen);
 		break;
 	case ys::TrffLightSignal::GREEN:
+		MoveAccel(*this);
 		Move(*this, screen);
+		break;
+	default:
 		break;
 	}
 }

@@ -31,7 +31,9 @@ namespace ys
 		float frameCheck;
 		float trafficTime;
 		bool isAuto;
+		bool isBeep;
 
+		std::vector<std::shared_ptr<Car>> cars;
 		TrafficLight horizontalTL;
 		TrafficLight verticalTL;
 	};

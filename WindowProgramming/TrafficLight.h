@@ -10,8 +10,9 @@ class TrafficLight : public ys::Subject
 {
 public:
 	TrafficLight() : state(ys::TrffLightSignal::GREENtoYELLOW), position(RECT()) {}
-	TrafficLight(const std::list<std::shared_ptr<ys::Observer>>& observers, const ys::TrffLightSignal& state, const RECT& position)
-		: observers(observers), state(state), position(position) {}
+
+	void Init(const RECT& position);
+	void Render(HDC hdc);
 
 	virtual void Attach(std::shared_ptr<ys::Observer> observer) override
 	{

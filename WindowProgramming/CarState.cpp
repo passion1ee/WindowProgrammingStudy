@@ -1,6 +1,8 @@
 #include "CarState.h"
 #include "Car.h"
 
+constexpr int fAccel = 100.0f;
+
 void HorizontalMove::Move(Car& car, RECT screen)
 {
 	ys::fVector tmp = car.getPosition();
@@ -18,7 +20,7 @@ void HorizontalMove::Move(Car& car, RECT screen)
 void HorizontalMove::StopAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.x > dSpeed)
 		tmp.x -= dSpeed;
 	else
@@ -29,7 +31,7 @@ void HorizontalMove::StopAccel(Car& car)
 void HorizontalMove::MoveAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.x < car.getSpeed() - dSpeed)
 		tmp.x += dSpeed;
 	else
@@ -39,18 +41,18 @@ void HorizontalMove::MoveAccel(Car& car)
 
 void HorizontalMove::Accel(Car& car)
 {
-	car.setSpeed(car.getSpeed() + 10.0f);
+	car.setSpeed(car.getSpeed() + fAccel);
 	auto tmp = car.getVelocity();
-	car.setVelocity({ tmp.x + 10.0f, tmp.y });
+	car.setVelocity({ tmp.x + fAccel, tmp.y });
 }
 
 void HorizontalMove::Decel(Car& car)
 {
 	auto tmp = car.getVelocity();
-	if (tmp.x > 10.0f)
+	if (tmp.x > fAccel)
 	{
-		car.setSpeed(car.getSpeed() - 10.0f);
-		car.setVelocity({ tmp.x - 10.0f, tmp.y });
+		car.setSpeed(car.getSpeed() - fAccel);
+		car.setVelocity({ tmp.x - fAccel, tmp.y });
 	}
 }
 
@@ -90,7 +92,7 @@ void HorizontalReverseMove::Move(Car& car, RECT screen)
 void HorizontalReverseMove::StopAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.x < dSpeed)
 		tmp.x += dSpeed;
 	else
@@ -101,7 +103,7 @@ void HorizontalReverseMove::StopAccel(Car& car)
 void HorizontalReverseMove::MoveAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.x >= -car.getSpeed() + dSpeed)
 		tmp.x -= dSpeed;
 	else
@@ -111,18 +113,18 @@ void HorizontalReverseMove::MoveAccel(Car& car)
 
 void HorizontalReverseMove::Accel(Car& car)
 {
-	car.setSpeed(car.getSpeed() - 10.0f);
+	car.setSpeed(car.getSpeed() + fAccel);
 	auto tmp = car.getVelocity();
-	car.setVelocity({ tmp.x - 10.0f, tmp.y });
+	car.setVelocity({ tmp.x - fAccel, tmp.y });
 }
 
 void HorizontalReverseMove::Decel(Car& car)
 {
 	auto tmp = car.getVelocity();
-	if (tmp.x < -10.0f)
+	if (tmp.x < -fAccel)
 	{
-		car.setSpeed(car.getSpeed() + 10.0f);
-		car.setVelocity({ tmp.x + 10.0f, tmp.y });
+		car.setSpeed(car.getSpeed() - fAccel);
+		car.setVelocity({ tmp.x + fAccel, tmp.y });
 	}
 }
 
@@ -162,7 +164,7 @@ void VerticalMove::Move(Car& car, RECT screen)
 void VerticalMove::StopAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.y > dSpeed)
 		tmp.y -= dSpeed;
 	else
@@ -173,7 +175,7 @@ void VerticalMove::StopAccel(Car& car)
 void VerticalMove::MoveAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.y < car.getSpeed() - dSpeed)
 		tmp.y += dSpeed;
 	else
@@ -183,18 +185,18 @@ void VerticalMove::MoveAccel(Car& car)
 
 void VerticalMove::Accel(Car& car)
 {
-	car.setSpeed(car.getSpeed() + 10.0f);
+	car.setSpeed(car.getSpeed() + fAccel);
 	auto tmp = car.getVelocity();
-	car.setVelocity({ tmp.x, tmp.y + 10.0f});
+	car.setVelocity({ tmp.x, tmp.y + fAccel});
 }
 
 void VerticalMove::Decel(Car& car)
 {
 	auto tmp = car.getVelocity();
-	if (tmp.y > 10.0f)
+	if (tmp.y > fAccel)
 	{
-		car.setSpeed(car.getSpeed() - 10.0f);
-		car.setVelocity({ tmp.x, tmp.y - 10.0f });
+		car.setSpeed(car.getSpeed() - fAccel);
+		car.setVelocity({ tmp.x, tmp.y - fAccel });
 	}
 }
 
@@ -234,7 +236,7 @@ void VerticalReverseMove::Move(Car& car, RECT screen)
 void VerticalReverseMove::StopAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.y < dSpeed)
 		tmp.y += dSpeed;
 	else
@@ -245,7 +247,7 @@ void VerticalReverseMove::StopAccel(Car& car)
 void VerticalReverseMove::MoveAccel(Car& car)
 {
 	ys::fVector tmp = car.getVelocity();
-	auto dSpeed = car.getSpeed() / (1 / ys::Timer::getRealFPS());
+	auto dSpeed = car.getSpeed() /  ys::Timer::getRealFPS();
 	if (tmp.y >= -car.getSpeed() + dSpeed)
 		tmp.y -= dSpeed;
 	else
@@ -255,18 +257,18 @@ void VerticalReverseMove::MoveAccel(Car& car)
 
 void VerticalReverseMove::Accel(Car& car)
 {
-	car.setSpeed(car.getSpeed() - 10.0f);
+	car.setSpeed(car.getSpeed() + fAccel);
 	auto tmp = car.getVelocity();
-	car.setVelocity({ tmp.x, tmp.y - 10.0f });
+	car.setVelocity({ tmp.x, tmp.y - fAccel });
 }
 
 void VerticalReverseMove::Decel(Car& car)
 {
 	auto tmp = car.getVelocity();
-	if (tmp.y < -10.0f)
+	if (tmp.y < -fAccel)
 	{
-		car.setSpeed(car.getSpeed() + 10.0f);
-		car.setVelocity({ tmp.x, tmp.y + 10.0f });
+		car.setSpeed(car.getSpeed() - fAccel);
+		car.setVelocity({ tmp.x, tmp.y + fAccel });
 	}
 }
 

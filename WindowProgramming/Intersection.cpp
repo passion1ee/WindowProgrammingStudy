@@ -1,4 +1,6 @@
 #include "Intersection.h"
+#include <cmath>
+
 namespace ys
 {
 	void Intersection::setScreen(RECT screenSize)
@@ -20,47 +22,56 @@ namespace ys
 		hBackDC = CreateCompatibleDC(hDC);
 
 		Intersection::setScreen(screenSize);
-
-		horizontalTL.Clear();
-		verticalTL.Clear();
-		horizontalTL.SetState(TrffLightSignal::RED, screen);
-		verticalTL.SetState(TrffLightSignal::GREEN, screen);
-		trafficTime = 0;
-		isAuto = true;
-
 		auto width = screen.right - screen.left;
 		auto height = screen.bottom - screen.top;
-		//((height * 2 / 3) - (height / 2)) / 2;
-		//((width * 2 / 3) - (width / 2)) / 2;
+
+		cars.clear();
+		cars.reserve(8);
+
+		horizontalTL.Clear();
+		horizontalTL.SetState(TrffLightSignal::GREEN, screen);
+		horizontalTL.Init(RECT(width / 12, 20, width * 7 / 24, height / 6));
+
+		verticalTL.Clear();
+		verticalTL.SetState(TrffLightSignal::RED, screen);
+		verticalTL.Init(RECT(width * 2 / 3 + width / 12,  height * 2 / 3 + 20,  width * 2 / 3 + width * 7 / 24, height * 2 / 3 + height / 6));
+
+		trafficTime = 0;
+		isAuto = true;
+		isBeep = true;
 
 		//TrafficLight에 Observer등록
 		for (int i = 0; i < 2; ++i)
 		{
 			std::shared_ptr<CarState> state = std::make_shared<HorizontalMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ 0, (height * 7 / 12) - (car->getSize() / 2) }, ys::fVector{ i * 100.0f, 0 });
+			car->Init(state, ys::fVector{ 0, (height * 7 / 12) - (car->getSize() / 2) }, ys::fVector{ ( i + 1) * 100.0f, 0 });
 			horizontalTL.Attach(car);
+			cars.push_back(car);
 		}
 		for (int i = 0; i < 2; ++i)
 		{
 			std::shared_ptr<CarState> state = std::make_shared<HorizontalReverseMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ 0, (height * 5 / 12) - (car->getSize() / 2) }, ys::fVector{ i * -100.0f, 0 });
+			car->Init(state, ys::fVector{ 0, (height * 5 / 12) - (car->getSize() / 2) }, ys::fVector{ ( i + 1 ) * -100.0f, 0 });
 			horizontalTL.Attach(car);
+			cars.push_back(car);
 		}
 		for (int i = 0; i < 2; ++i)
 		{
 			std::shared_ptr<CarState> state = std::make_shared<VerticalMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ (width * 5 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, i * 100.0f });
+			car->Init(state, ys::fVector{ (width * 5 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, ( i + 1 ) * 100.0f });
 			verticalTL.Attach(car);
+			cars.push_back(car);
 		}
 		for (int i = 0; i < 2; ++i)
 		{
 			std::shared_ptr<CarState> state = std::make_shared<VerticalReverseMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ (width * 7 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, i * -100.0f });
+			car->Init(state, ys::fVector{ (width * 7 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, ( i + 1 ) * -100.0f });
 			verticalTL.Attach(car);
+			cars.push_back(car);
 		}
 
 		Timer::Init();
@@ -80,6 +91,17 @@ namespace ys
 		}
 	}
 
+	void Intersection::Render()
+	{
+		PatBlt(hBackDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, WHITENESS);
+		renderFrame(hBackDC);
+		for (auto& car : cars)
+			car->Render(hBackDC, screen);
+		horizontalTL.Render(hBackDC);
+		verticalTL.Render(hBackDC);
+		BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
+	}
+
 	void Intersection::Update()
 	{
 		KeyUpdate();
@@ -89,15 +111,23 @@ namespace ys
 
 		if (trafficTime >= 4.0f)
 		{
+			if (isBeep)
+			{
+				Beep(1000, 100);
+				isBeep = false;
+			}
+				
 			if (horizontalTL.GetState() == TrffLightSignal::GREEN)
 				horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 
 			if (verticalTL.GetState() == TrffLightSignal::GREEN)
-				horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
+				verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 		}
 
 		if (trafficTime >= 5.0f)
 		{
+			isBeep = true;
+			Beep(2000, 100);
 			if (horizontalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
 			{
 				horizontalTL.SetState(TrffLightSignal::RED, screen);
@@ -112,6 +142,30 @@ namespace ys
 			trafficTime = 0.0f;
 		}
 
+
+		if (horizontalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
+		{
+			horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
+		}
+		if (verticalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
+		{
+			verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
+		}
+		if (horizontalTL.GetState() == TrffLightSignal::GREEN)
+		{
+			horizontalTL.SetState(TrffLightSignal::GREEN, screen);
+		}
+		if (verticalTL.GetState() == TrffLightSignal::GREEN)
+		{
+			verticalTL.SetState(TrffLightSignal::GREEN, screen);
+		}
+	}
+
+	void Intersection::click(int x, int y)
+	{
+		//해당하는 신호등의 원을 클릭했는가 -> 신호등은 그 원에 해당하는 메세지 전달
+		//반대쪽 신호등은 그 반대 메세지 전달
+		//신호 ChangeTime을 reset
 	}
 
 	inline void Intersection::KeyUpdate()
@@ -134,8 +188,19 @@ namespace ys
 		auto height = screen.bottom - screen.top;
 		//중앙선
 		{
-			auto pen = CreatePen(PS_SOLID, 5, RGB(255, 255, 0));
+			auto pen = CreatePen(PS_SOLID, 8, RGB(255, 255, 0));
 			auto oldPen = SelectObject(hdc, pen);
+
+			MoveToEx(hdc, 0, height / 2, NULL);
+			LineTo(hdc, width, height / 2);
+			MoveToEx(hdc, width / 2, 0, NULL);
+			LineTo(hdc, width / 2, height);
+
+			SelectObject(hdc, oldPen);
+			DeleteObject(pen);
+
+			pen = CreatePen(PS_DASH, 1, RGB(0, 0, 0));
+			oldPen = SelectObject(hdc, pen);
 
 			MoveToEx(hdc, 0, height / 2, NULL);
 			LineTo(hdc, width, height / 2);
@@ -147,7 +212,7 @@ namespace ys
 		}
 		//가운데
 		{
-			auto pen = CreatePen(PS_SOLID, 5, RGB(255, 255, 0));
+			auto pen = CreatePen(PS_DASH, 1, RGB(0, 0, 0));
 			auto oldPen = SelectObject(hdc, pen);
 
 			Rectangle(hdc, width / 3, height / 3, width * 2 / 3, height * 2 / 3);
@@ -164,16 +229,4 @@ namespace ys
 		}
 	}
 
-
-	void Intersection::Render()
-	{
-		renderFrame(hBackDC);
-	}
-
-	void Intersection::click(int x, int y)
-	{
-		//해당하는 신호등의 원을 클릭했는가 -> 신호등은 그 원에 해당하는 메세지 전달
-		//반대쪽 신호등은 그 반대 메세지 전달
-		//신호 ChangeTime을 reset
-	}
 }
