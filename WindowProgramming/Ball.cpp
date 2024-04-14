@@ -38,6 +38,10 @@ void Ball::Update(RECT& clientRect, bool isStop)
 	{
 		Beep(1415, 30);
 		Direction.x = -Direction.x;// 양쪽 벽에 닿았을때 방향전환
+		if (position.x < 0.0)
+			position.x = 0;
+		if (position.x + size > clientRect.right)
+			position.x = clientRect.right - size;
 	}
 
 	if (position.y < 0.0) 
@@ -45,17 +49,23 @@ void Ball::Update(RECT& clientRect, bool isStop)
 		Beep(1415, 30);
 		Direction.y = -Direction.y;//윗 벽에 닿았을때 뚝 떨어지기
 		Direction.x = 0.0;
+		if (position.y < 0.0)
+			position.y = 0;
 	}
 	if (position.y + size > clientRect.bottom && Direction.x != 0.0) //밑 벽에 닿았을때 위로 올라가기
 	{
 		Beep(1415, 30);
 		Direction.y = -Direction.y;
+		if (position.y + size > clientRect.bottom)
+			position.y = clientRect.bottom - size;
 	}
 	else if (position.y + size > clientRect.bottom && Direction.x == 0.0)//뚝 떨어질때 밑 벽 닿았을때
 	{
 		Beep(1415, 30);
 		Direction.x = 2.0f;
 		Direction = { (ys::uid(ys::randomEngine) % 2 == 0 ? -Direction.x : Direction.x), -Direction.y };
+		if (position.y + size > clientRect.bottom)
+			position.y = clientRect.bottom - size;
 	}
 }
 

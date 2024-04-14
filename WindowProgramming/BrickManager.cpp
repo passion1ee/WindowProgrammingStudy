@@ -12,11 +12,11 @@ void BrickManager::Init(const int& quantity, const RECT& screenSize)
 		long x = 5 * xSize + ((i % (quantity / 3)) * xSize);
 		long y;
 		if (i < quantity / 3)
-			y = screenSize.bottom - 6 * ySize;
+			y = screenSize.bottom - 8 * ySize;
 		else if(i < quantity * 2 / 3)
-			y = screenSize.bottom - 5 * ySize;
+			y = screenSize.bottom - 7 * ySize;
 		else
-			y = screenSize.bottom - 4 * ySize;
+			y = screenSize.bottom - 6 * ySize;
 
 		bricks.push_back(Brick(RECT(x, y, x + xSize, y + ySize), 2, true));
 	}
