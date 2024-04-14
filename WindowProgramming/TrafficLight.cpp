@@ -1,10 +1,10 @@
 #include "TrafficLight.h"
 #include "ysObserver.h"
 
-void TrafficLight::Notify()
+void TrafficLight::Notify(RECT screen)
 {
 	for (auto observer : observers)
 	{
-		observer->Update(state);
+		observer->Update(state, screen);
 	}
 }

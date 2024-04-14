@@ -148,6 +148,7 @@
     <ClCompile Include="BrickManager.cpp" />
     <ClCompile Include="BrickOut.cpp" />
     <ClCompile Include="Car.cpp" />
+    <ClCompile Include="CarState.cpp" />
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main2.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="BrickManager.h" />
     <ClInclude Include="BrickOut.h" />
     <ClInclude Include="Car.h" />
+    <ClInclude Include="CarState.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />

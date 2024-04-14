@@ -280,7 +280,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__3_3
 
-#endif // PRACTICE__3_3
 #include <windowsx.h>
 #include ".h"
 
@@ -420,6 +419,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 	return (::DefWindowProc(hWnd, Msg, wParam, lParam));
 }
+#endif // PRACTICE__3_3
 
 #endif // PRACTICE__3
 

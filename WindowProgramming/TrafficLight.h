@@ -9,7 +9,7 @@ class ys::Observer;
 class TrafficLight : public ys::Subject
 {
 public:
-	TrafficLight() : state(0) {}
+	TrafficLight() : state(ys::TrffLightSignal::GREENtoYELLOW), position(RECT()) {}
 
 	virtual void Attach(ys::Observer* observer) override
 	{
@@ -20,17 +20,16 @@ public:
 		observers.remove(observer);
 	}
 
-	virtual void Notify() override;
-
-	void SetState(BYTE signal)
+	virtual void Notify(RECT screen) override;
+	void SetState(ys::TrffLightSignal signal, RECT screen)
 	{
 		state = signal;
-		Notify();
+		Notify(screen);
 	}
-	BYTE GetState() const { return state; }
+	ys::TrffLightSignal GetState() const { return state; }
 
 private:
 	std::list<ys::Observer*> observers;
-	BYTE state;
+	ys::TrffLightSignal state;
 	RECT position;
 };
