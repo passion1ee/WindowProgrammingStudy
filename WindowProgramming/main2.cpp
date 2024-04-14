@@ -9,8 +9,8 @@
 
 #define PRACTICE__3
 //#define PRACTICE__3_1
-//#define PRACTICE__3_2
-#define PRACTICE__3_3
+#define PRACTICE__3_2
+//#define PRACTICE__3_3
 
 #ifdef PRACTICE__3
 #ifdef PRACTICE__3_1
@@ -143,7 +143,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 }
 
 #endif // PRACTICE__3_1
-
 
 #ifdef PRACTICE__3_2
 #include <windowsx.h>
@@ -279,8 +278,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #endif // PRACTICE__3_2
 
 #ifdef PRACTICE__3_3
-
-#endif // PRACTICE__3_3
 #include <windowsx.h>
 #include ".h"
 
@@ -420,6 +417,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 	return (::DefWindowProc(hWnd, Msg, wParam, lParam));
 }
+#endif // PRACTICE__3_3
 
 #endif // PRACTICE__3
 
