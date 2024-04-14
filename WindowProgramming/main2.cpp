@@ -8,9 +8,9 @@
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
 #define PRACTICE__3
-#define PRACTICE__3_1
+//#define PRACTICE__3_1
 //#define PRACTICE__3_2
-//#define PRACTICE__3_3
+#define PRACTICE__3_3
 
 #ifdef PRACTICE__3
 #ifdef PRACTICE__3_1
@@ -279,9 +279,9 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__3_3
 #include <windowsx.h>
-#include ".h"
+#include "Intersection.h"
 
-ys:: game;
+ys::Intersection game;
 RECT windowRect{ 0, 0, 16 * 80, 9 * 80 };
 
 HINSTANCE g_hInst;
@@ -353,32 +353,13 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		break;
 	}case WM_LBUTTONDOWN:
 	{
-		game.setMousePosition(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		game.setMousePosition(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		break;
-	}
-	case WM_LBUTTONDOWN:
-	{
+		game.click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		ys::InputManager::setKeyState(VK_LBUTTON, FALSE, FALSE);
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		ys::InputManager::setKeyState(VK_RBUTTON, FALSE, FALSE);
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
 		ys::InputManager::setKeyState(VK_LBUTTON, KF_REPEAT, KF_UP);
-		break;
-	}
-	case WM_RBUTTONUP:
-	{
-		ys::InputManager::setKeyState(VK_RBUTTON, KF_REPEAT, KF_UP);
 		break;
 	}
 	case WM_KEYDOWN:
@@ -403,9 +384,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_PAINT:
 	{
-		PAINTSTRUCT ps;
-		hDC = BeginPaint(hWnd, &ps);
-		::EndPaint(hWnd, &ps);
 		break;
 	}
 	case WM_DESTROY:
