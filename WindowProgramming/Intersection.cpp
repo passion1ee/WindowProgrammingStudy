@@ -43,6 +43,7 @@ namespace ys
 		trafficTime = 0;
 		isAuto = true;
 		isBeep = true;
+		isCenterEmpty = true;
 
 		//TrafficLight¿¡ Observerµî·Ï
 		horizontalTL.Attach(person);
@@ -120,6 +121,9 @@ namespace ys
 		horizontalTL.Render(hBackDC);
 		verticalTL.Render(hBackDC);
 		Timer::Render(hBackDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
+		std::wstring line;
+		line += std::to_wstring(trafficTime);
+		TextOut(hBackDC, 100, 400, line.c_str(), line.size());
 		BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
 	}
 
@@ -147,7 +151,7 @@ namespace ys
 				verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 		}
 		//RED && GREEN
-		if (trafficTime >= setTrafficTime)
+		if (trafficTime >= setTrafficTime && isCenterEmpty)
 		{
 			isBeep = true;
 			Beep(2000, 100);
@@ -165,8 +169,31 @@ namespace ys
 			trafficTime = 0.0f;
 		}
 		
-		horizontalTL.SetState(horizontalTL.GetState(), screen);
-		verticalTL.SetState(verticalTL.GetState(), screen);
+		if (horizontalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
+		{
+			horizontalTL.SetState(horizontalTL.GetState(), screen);
+			if (horizontalTL.CenterEmpty())
+				isCenterEmpty = true;
+			else
+				isCenterEmpty = false;
+		}
+
+		if (verticalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
+		{
+			verticalTL.SetState(verticalTL.GetState(), screen);
+			if (verticalTL.CenterEmpty())
+				isCenterEmpty = true;
+			else
+				isCenterEmpty = false;
+		}
+
+
+		if (horizontalTL.GetState() == TrffLightSignal::GREEN)
+			horizontalTL.SetState(horizontalTL.GetState(), screen);
+
+		if (verticalTL.GetState() == TrffLightSignal::GREEN)
+			verticalTL.SetState(verticalTL.GetState(), screen);
+
 	}
 
 	void Intersection::click(int x, int y)

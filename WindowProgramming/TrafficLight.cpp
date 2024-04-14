@@ -1,9 +1,11 @@
 #include "TrafficLight.h"
 #include "ysObserver.h"
+#include "Car.h"
 
 void TrafficLight::Init(const RECT& position)
 {
 	this->position = position;
+	isCenterEmpty = true;
 }
 
 void TrafficLight::Render(HDC hdc)
@@ -50,10 +52,15 @@ void TrafficLight::Render(HDC hdc)
 
 void TrafficLight::Notify(RECT screen)
 {
+	bool isEmptyTmp{ true };
 	for (auto& observer : observers)
 	{
-		observer->Update(state, screen);
+		if(isEmptyTmp)
+			isEmptyTmp = observer->Update(state, screen);
+		else
+			observer->Update(state, screen);
 	}
+	isCenterEmpty = isEmptyTmp;
 }
 
 std::pair<ys::fVector, float> TrafficLight::getREDcircle() const
@@ -88,4 +95,3 @@ std::pair<ys::fVector, float> TrafficLight::getGREENcircle() const
 
 	return std::make_pair(center, radius);
 }
-

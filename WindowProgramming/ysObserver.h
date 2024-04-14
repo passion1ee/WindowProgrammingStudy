@@ -10,6 +10,6 @@ namespace ys
 	{
 	public:
 		virtual ~Observer() {}
-		virtual void Update(ys::TrffLightSignal signal, RECT screen) = 0;
+		virtual bool Update(ys::TrffLightSignal signal, RECT screen) = 0;
 	};
 }

@@ -10,7 +10,7 @@ void Car::Init(const std::shared_ptr<CarState>& myState, const ys::fVector& posi
 	maxSpeed = std::abs(velocity.x) >= std::abs(velocity.y) ? std::abs(velocity.x) : std::abs(velocity.y);
 }
 
-void Car::Update(ys::TrffLightSignal signal, RECT screen)
+bool Car::Update(ys::TrffLightSignal signal, RECT screen)
 {
 	if (ys::InputManager::getKeyDown(VK_ADD)) {	Accel(*this); }
 	if (ys::InputManager::getKeyDown(VK_SUBTRACT)) { Decel(*this); }
@@ -21,9 +21,26 @@ void Car::Update(ys::TrffLightSignal signal, RECT screen)
 		Stop();
 		break;
 	case ys::TrffLightSignal::GREENtoYELLOW:
-		StopAccel(*this);
-		Move(*this, screen);
+	{
+		auto width = screen.right - screen.left;
+		auto height = screen.bottom - screen.top;
+		RECT carRect = { position.x, position.y, position.x + size, position.y + size };
+		RECT rect = { width / 3, height / 3, width * 2 / 3, height * 2 / 3 };
+		RECT collideRect;
+		if (!IntersectRect(&collideRect, &carRect, &rect))
+		{
+			StopAccel(*this);
+			Move(*this, screen);
+			return true;
+		}
+		else
+		{
+			MoveAccel(*this);
+			Move(*this, screen);
+			return false;
+		}
 		break;
+	}
 	case ys::TrffLightSignal::GREEN:
 		MoveAccel(*this);
 		Move(*this, screen);
@@ -31,6 +48,7 @@ void Car::Update(ys::TrffLightSignal signal, RECT screen)
 	default:
 		break;
 	}
+	return true;
 }
 
 void Car::Render(HDC hdc, RECT screen)
@@ -52,4 +70,9 @@ void Car::Render(HDC hdc, RECT screen)
 void Car::Stop()
 {
 	velocity = { 0.0f, 0.0f };
+}
+
+bool Car::sameRect(const RECT& one, const RECT& other)
+{
+	return one.left == other.left && one.top == other.top && one.right == other.right && one.bottom == other.bottom;
 }

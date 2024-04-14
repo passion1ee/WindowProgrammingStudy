@@ -7,7 +7,7 @@ void Person::Init(const ys::fVector& position, const ys::fVector& velocity)
 	this->velocity = velocity;
 }
 
-void Person::Update(ys::TrffLightSignal signal, RECT screen)
+bool Person::Update(ys::TrffLightSignal signal, RECT screen)
 {
 	auto width = screen.right - screen.left;
 	auto height = screen.bottom - screen.top;
@@ -43,8 +43,9 @@ void Person::Update(ys::TrffLightSignal signal, RECT screen)
 		if(collideNum == 1 || collideNum == 3) Move(screen);
 		break;
 	default:
-		break;
+		return false;
 	}
+	return true;
 }
 
 void Person::Render(HDC hdc)

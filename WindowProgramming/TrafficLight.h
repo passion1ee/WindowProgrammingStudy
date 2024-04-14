@@ -42,9 +42,11 @@ public:
 	std::pair<ys::fVector, float> getYELLOWcircle() const;
 	std::pair<ys::fVector, float> getGREENcircle() const;
 
+	bool CenterEmpty() const { return isCenterEmpty; }
 private:
 	std::list<std::shared_ptr<ys::Observer>> observers;
 	ys::TrffLightSignal state;
 	RECT position;
+	bool isCenterEmpty;
 };
 

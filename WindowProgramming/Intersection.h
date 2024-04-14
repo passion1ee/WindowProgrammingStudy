@@ -38,6 +38,7 @@ namespace ys
 		float trafficTime;
 		bool isAuto;
 		bool isBeep;
+		bool isCenterEmpty;
 
 		std::shared_ptr<Person> person;
 		std::vector<std::shared_ptr<Car>> cars;

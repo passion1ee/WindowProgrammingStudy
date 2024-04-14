@@ -6,7 +6,7 @@ public:
 	Person() : size(40) {}
 
 	void Init(const ys::fVector& position, const ys::fVector& velocity);
-	virtual void Update(ys::TrffLightSignal signal, RECT screen) final;
+	virtual bool Update(ys::TrffLightSignal signal, RECT screen) final;
 	void Render(HDC hdc);
 
 	void setVelocity(ys::fVector val) { velocity = val; }

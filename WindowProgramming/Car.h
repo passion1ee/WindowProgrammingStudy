@@ -12,7 +12,7 @@ public:
 
 public:
 	void Init(const std::shared_ptr<CarState>& myState, const ys::fVector& position, const ys::fVector& velocity);
-	virtual void Update(ys::TrffLightSignal signal, RECT screen) final;
+	virtual bool Update(ys::TrffLightSignal signal, RECT screen) final;
 	void Render(HDC hdc, RECT screen);
 
 public:
@@ -37,6 +37,7 @@ private:
 	void Accel(Car& car) { if (myState) myState->Accel(car); }
 	void Decel(Car& car) { if (myState) myState->Decel(car); }
 
+	bool sameRect(const RECT& one, const RECT& other);
 private:
 	std::shared_ptr <CarState> myState;
 	BYTE size;
