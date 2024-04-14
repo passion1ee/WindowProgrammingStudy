@@ -107,7 +107,9 @@ namespace ys
 		KeyUpdate();
 
 		if (isAuto)//자동이면 타이머를 쓴다 아니면 0.0으로 고정한다
-			trafficTime += 1 / ys::Timer::getRealFPS();			
+			trafficTime += 1 / ys::Timer::getRealFPS();
+		else
+			trafficTime = 0.0f;
 
 		if (trafficTime >= 4.0f)
 		{
@@ -143,26 +145,22 @@ namespace ys
 		}
 
 
-		if (horizontalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
-		{
+		if (horizontalTL.GetState() == TrffLightSignal::GREENtoYELLOW) 
 			horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
-		}
+
 		if (verticalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
-		{
 			verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
-		}
+
 		if (horizontalTL.GetState() == TrffLightSignal::GREEN)
-		{
 			horizontalTL.SetState(TrffLightSignal::GREEN, screen);
-		}
+
 		if (verticalTL.GetState() == TrffLightSignal::GREEN)
-		{
 			verticalTL.SetState(TrffLightSignal::GREEN, screen);
-		}
 	}
 
 	void Intersection::click(int x, int y)
 	{
+		mousePosition = { static_cast<float>(x), static_cast<float>(y) };
 		//해당하는 신호등의 원을 클릭했는가 -> 신호등은 그 원에 해당하는 메세지 전달
 		//반대쪽 신호등은 그 반대 메세지 전달
 		//신호 ChangeTime을 reset
@@ -179,6 +177,59 @@ namespace ys
 		{
 			isAuto = isAuto ? false : true;
 			if(!isAuto) trafficTime = 0.0f;
+		}
+
+		if (ys::InputManager::getKeyUp(VK_LBUTTON))
+		{
+			const auto& hoRED = horizontalTL.getREDcircle();
+			const auto& hoYELLOW = horizontalTL.getYELLOWcircle();
+			const auto& hoGREEN = horizontalTL.getGREENcircle();
+
+			const auto& veRED = verticalTL.getREDcircle();
+			const auto& veYELLOW = verticalTL.getYELLOWcircle();
+			const auto& veGREEN = verticalTL.getGREENcircle();
+			if (circleCollide(hoRED, mousePosition.x, mousePosition.y))
+			{
+				Beep(3000, 100);
+				horizontalTL.SetState(TrffLightSignal::RED, screen);
+				verticalTL.SetState(TrffLightSignal::GREEN, screen);
+				trafficTime = 0.0f;
+			}
+			if (circleCollide(hoYELLOW, mousePosition.x, mousePosition.y))
+			{
+				Beep(3000, 100);
+				horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
+				verticalTL.SetState(TrffLightSignal::RED, screen);
+				trafficTime = 4.0f;
+			}
+			if (circleCollide(hoGREEN, mousePosition.x, mousePosition.y))
+			{
+				Beep(3000, 100);
+				horizontalTL.SetState(TrffLightSignal::GREEN, screen);
+				verticalTL.SetState(TrffLightSignal::RED, screen);
+				trafficTime = 0.0f;
+			}
+			if (circleCollide(veRED, mousePosition.x, mousePosition.y))
+			{
+				Beep(3000, 100);
+				verticalTL.SetState(TrffLightSignal::RED, screen);
+				horizontalTL.SetState(TrffLightSignal::GREEN, screen);
+				trafficTime = 0.0f;
+			}
+			if (circleCollide(veYELLOW, mousePosition.x, mousePosition.y))
+			{
+				Beep(3000, 100);
+				verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
+				horizontalTL.SetState(TrffLightSignal::RED, screen);
+				trafficTime = 4.0f;
+			}
+			if (circleCollide(veGREEN, mousePosition.x, mousePosition.y))
+			{
+				Beep(3000, 100);
+				verticalTL.SetState(TrffLightSignal::GREEN, screen);
+				horizontalTL.SetState(TrffLightSignal::RED, screen);
+				trafficTime = 0.0f;
+			}
 		}
 	}
 

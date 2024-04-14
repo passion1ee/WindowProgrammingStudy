@@ -56,3 +56,36 @@ void TrafficLight::Notify(RECT screen)
 	}
 }
 
+std::pair<ys::fVector, float> TrafficLight::getREDcircle() const
+{
+	auto width = position.right - position.left;
+	RECT circleRect{ position.left, position.top, position.left + width / 3, position.bottom };
+
+	ys::fVector center = { (circleRect.right + circleRect.left) / 2.0f, (circleRect.bottom + circleRect.top) / 2.0f };
+	float radius = (circleRect.right - circleRect.left) / 2.0f;
+
+	return std::make_pair(center, radius);
+}
+
+std::pair<ys::fVector, float> TrafficLight::getYELLOWcircle() const
+{
+	auto width = position.right - position.left;
+	RECT circleRect{ position.left + width / 3, position.top, position.left + width * 2 / 3, position.bottom };
+
+	ys::fVector center = { (circleRect.right + circleRect.left) / 2.0f, (circleRect.bottom + circleRect.top) / 2.0f };
+	float radius = (circleRect.right - circleRect.left) / 2.0f;
+
+	return std::make_pair(center, radius);
+}
+
+std::pair<ys::fVector, float> TrafficLight::getGREENcircle() const
+{ const
+	auto width = position.right - position.left;
+	RECT circleRect{ position.left + width * 2 / 3, position.top, position.left + width, position.bottom };
+
+	ys::fVector center = { (circleRect.right + circleRect.left) / 2.0f, (circleRect.bottom + circleRect.top) / 2.0f };
+	float radius = (circleRect.right - circleRect.left) / 2.0f;
+
+	return std::make_pair(center, radius);
+}
+

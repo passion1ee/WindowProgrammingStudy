@@ -37,6 +37,11 @@ public:
 	}
 	ys::TrffLightSignal GetState() const { return state; }
 
+public:
+	std::pair<ys::fVector, float> getREDcircle() const;
+	std::pair<ys::fVector, float> getYELLOWcircle() const;
+	std::pair<ys::fVector, float> getGREENcircle() const;
+
 private:
 	std::list<std::shared_ptr<ys::Observer>> observers;
 	ys::TrffLightSignal state;

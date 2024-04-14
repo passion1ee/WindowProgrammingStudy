@@ -152,6 +152,7 @@
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main2.cpp" />
+    <ClCompile Include="Person.cpp" />
     <ClCompile Include="RandomShape.cpp" />
     <ClCompile Include="selectShape.cpp" />
     <ClCompile Include="SnakeGame.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Car.h" />
     <ClInclude Include="CarState.h" />
     <ClInclude Include="Intersection.h" />
+    <ClInclude Include="Person.h" />
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="SnakeGame.h" />
