@@ -65,7 +65,7 @@ void Ball::Render(HDC hdc)
 {
 	std::wstring text;
 	text += L"x: " + std::to_wstring(position.x) + L", y: " + std::to_wstring(position.y) +
-		L", velocity: " + std::to_wstring(velocity);
+		L", speed: " + std::to_wstring(velocity);
 	TextOut(hdc, 200, 0, text.c_str(), text.size()); 
 	std::wstring text2;
 	text2 += L"Direction: " + std::to_wstring(Direction.x) + L", Direction: " + std::to_wstring(Direction.y);
