@@ -112,8 +112,8 @@ void Person::Move(const RECT& screen)
 
 inline void Person::setVelocity(const RECT& screen)
 {
-	auto wVeloc = ((screen.right - screen.left) / 3.0f) / 2.0f;
-	auto hVeloc = ((screen.bottom - screen.top) / 3.0f) / 2.0f;
+	auto wVeloc = ((screen.right - screen.left) / 3.0f + size * 2) / 2.0f;
+	auto hVeloc = ((screen.bottom - screen.top) / 3.0f + size * 2) / 2.0f;
 	switch (collideNum)
 	{
 	case 1://to2

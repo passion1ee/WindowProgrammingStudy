@@ -1,7 +1,7 @@
 #include "Intersection.h"
 #include <cmath>
 
-constexpr float setTrafficTime = 10.0f;
+constexpr float setTrafficTime = 3.0f;
 
 namespace ys
 {
@@ -94,9 +94,18 @@ namespace ys
 				frameCheck -= 1 / Timer::getRealFPS();
 				Update();
 				Render();
-				Timer::Render(hDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
 				InputManager::AfterUpdate();
 			}
+		}
+		else if (Timer::getRealFPS() == 0.0f)
+		{
+			PatBlt(hBackDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, WHITENESS);
+			std::wstring line;
+			line += L"일시 정지";
+			SIZE size;  GetTextExtentPoint32(hBackDC, line.c_str(), line.size(), &size);
+			TextOut(hBackDC, (screen.right - screen.left) / 2 - size.cx, (screen.bottom - screen.top) / 2, line.c_str(), line.size());
+			BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
+			InputManager::AfterUpdate();
 		}
 	}
 
@@ -110,6 +119,7 @@ namespace ys
 
 		horizontalTL.Render(hBackDC);
 		verticalTL.Render(hBackDC);
+		Timer::Render(hBackDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
 		BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
 	}
 
@@ -201,7 +211,7 @@ namespace ys
 				Beep(3000, 100);
 				horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 				verticalTL.SetState(TrffLightSignal::RED, screen);
-				trafficTime = 4.0f;
+				trafficTime = setTrafficTime - 1.0f;
 			}
 			if (circleCollide(hoGREEN, mousePosition.x, mousePosition.y))
 			{
@@ -222,7 +232,7 @@ namespace ys
 				Beep(3000, 100);
 				verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 				horizontalTL.SetState(TrffLightSignal::RED, screen);
-				trafficTime = 4.0f;
+				trafficTime = setTrafficTime - 1.0f;
 			}
 			if (circleCollide(veGREEN, mousePosition.x, mousePosition.y))
 			{
