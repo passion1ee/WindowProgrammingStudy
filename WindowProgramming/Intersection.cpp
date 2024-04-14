@@ -1,6 +1,8 @@
 #include "Intersection.h"
 #include <cmath>
 
+constexpr float setTrafficTime = 10.0f;
+
 namespace ys
 {
 	void Intersection::setScreen(RECT screenSize)
@@ -27,6 +29,8 @@ namespace ys
 
 		cars.clear();
 		cars.reserve(8);
+		person = std::make_shared<Person>();
+		person->Init(ys::fVector{ width / 3 - person->getSize(),  height / 3 - person->getSize() }, ys::fVector{1, 0});
 
 		horizontalTL.Clear();
 		horizontalTL.SetState(TrffLightSignal::GREEN, screen);
@@ -41,6 +45,7 @@ namespace ys
 		isBeep = true;
 
 		//TrafficLight에 Observer등록
+		horizontalTL.Attach(person);
 		for (int i = 0; i < 2; ++i)
 		{
 			std::shared_ptr<CarState> state = std::make_shared<HorizontalMove>();
@@ -79,15 +84,19 @@ namespace ys
 
 	void Intersection::Run()
 	{
-		Timer::Update();
-		if (1 / Timer::getRealFPS() <= (frameCheck += Timer::getDeltaTime()))
-		{
+		if (Timer::getRealFPS() == 0.0f)
 			InputManager::BeforeUpdate();
-			frameCheck -= 1 / Timer::getRealFPS();
-			Update();
-			Render();
-			Timer::Render(hDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
-			InputManager::AfterUpdate();
+		Timer::Update();
+		if(Timer::getRealFPS() != 0.0f){
+			if (1 / Timer::getRealFPS() <= (frameCheck += Timer::getDeltaTime()))
+			{
+				InputManager::BeforeUpdate();
+				frameCheck -= 1 / Timer::getRealFPS();
+				Update();
+				Render();
+				Timer::Render(hDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
+				InputManager::AfterUpdate();
+			}
 		}
 	}
 
@@ -97,6 +106,8 @@ namespace ys
 		renderFrame(hBackDC);
 		for (auto& car : cars)
 			car->Render(hBackDC, screen);
+		person->Render(hBackDC);
+
 		horizontalTL.Render(hBackDC);
 		verticalTL.Render(hBackDC);
 		BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
@@ -110,23 +121,23 @@ namespace ys
 			trafficTime += 1 / ys::Timer::getRealFPS();
 		else
 			trafficTime = 0.0f;
-
-		if (trafficTime >= 4.0f)
+		//YELLOW
+		if (trafficTime >= setTrafficTime - 1.0f)
 		{
 			if (isBeep)
 			{
 				Beep(1000, 100);
 				isBeep = false;
 			}
-				
+			
 			if (horizontalTL.GetState() == TrffLightSignal::GREEN)
 				horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 
 			if (verticalTL.GetState() == TrffLightSignal::GREEN)
 				verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
 		}
-
-		if (trafficTime >= 5.0f)
+		//RED && GREEN
+		if (trafficTime >= setTrafficTime)
 		{
 			isBeep = true;
 			Beep(2000, 100);
@@ -143,19 +154,9 @@ namespace ys
 			}
 			trafficTime = 0.0f;
 		}
-
-
-		if (horizontalTL.GetState() == TrffLightSignal::GREENtoYELLOW) 
-			horizontalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
-
-		if (verticalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
-			verticalTL.SetState(TrffLightSignal::GREENtoYELLOW, screen);
-
-		if (horizontalTL.GetState() == TrffLightSignal::GREEN)
-			horizontalTL.SetState(TrffLightSignal::GREEN, screen);
-
-		if (verticalTL.GetState() == TrffLightSignal::GREEN)
-			verticalTL.SetState(TrffLightSignal::GREEN, screen);
+		
+		horizontalTL.SetState(horizontalTL.GetState(), screen);
+		verticalTL.SetState(verticalTL.GetState(), screen);
 	}
 
 	void Intersection::click(int x, int y)
@@ -273,10 +274,14 @@ namespace ys
 		}
 		//외각블럭
 		{
+			auto pen = CreatePen(PS_SOLID, 5, RGB(0, 0, 0));
+			auto oldPen = SelectObject(hdc, pen);
 			Rectangle(hdc, 0, 0, width / 3, height / 3);
 			Rectangle(hdc, width * 2 / 3, 0, width, height / 3);
 			Rectangle(hdc, 0, height * 2 / 3, width / 3, height);
 			Rectangle(hdc, width * 2 / 3, height * 2 / 3, width, height);
+			SelectObject(hdc, oldPen);
+			DeleteObject(pen);
 		}
 	}
 

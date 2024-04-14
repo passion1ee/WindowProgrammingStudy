@@ -36,7 +36,17 @@ void Car::Update(ys::TrffLightSignal signal, RECT screen)
 void Car::Render(HDC hdc, RECT screen)
 {
 	if (myState)
+	{
+		auto brush = CreateSolidBrush(RGB(255, 128, 0));
+		auto oldBrush = (HBRUSH)SelectObject(hdc, brush);
+		auto pen = CreatePen(PS_SOLID, 8, RGB(128, 64, 0));
+		auto oldPen = SelectObject(hdc, pen);
 		myState->Render(hdc, *this, screen);
+		SelectObject(hdc, oldBrush);
+		SelectObject(hdc, oldPen);
+		DeleteObject(brush);
+		DeleteObject(pen);
+	}
 }
 
 void Car::Stop()

@@ -1,6 +1,7 @@
 #pragma once
 #include "TrafficLight.h"
 #include "Car.h"
+#include "Person.h"
 
 namespace ys
 {
@@ -16,7 +17,7 @@ namespace ys
 		void click(int x, int y);
 
 	private:
-		bool circleCollide(std::pair<ys::fVector, float> circle, int x, int y) const
+		inline bool circleCollide(std::pair<ys::fVector, float> circle, int x, int y) const
 		{ return(sqrt(std::pow(x - circle.first.x, 2) + std::pow(y - circle.first.y, 2)) < circle.second); }
 
 		void Update();
@@ -38,6 +39,7 @@ namespace ys
 		bool isAuto;
 		bool isBeep;
 
+		std::shared_ptr<Person> person;
 		std::vector<std::shared_ptr<Car>> cars;
 		TrafficLight horizontalTL;
 		TrafficLight verticalTL;

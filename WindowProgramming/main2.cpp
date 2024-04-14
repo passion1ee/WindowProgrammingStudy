@@ -385,9 +385,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_PAINT:
 	{
-		PAINTSTRUCT ps;
-		hDC = BeginPaint(hWnd, &ps);
-		::EndPaint(hWnd, &ps);
 		break;
 	}
 	case WM_DESTROY:
