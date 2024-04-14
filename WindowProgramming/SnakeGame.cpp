@@ -63,7 +63,7 @@ namespace ys
 			Timer::Update();
 			if (InputManager::getKeyUp((UINT)Key::S))
 			{
-				setMoveTime = 2 / Timer::getRealFPS();
+				setMoveTime = 1 / Timer::getRealFPS() / 3;
 				isRun = isRun ? false : true;
 			}
 			moveCoolTime += Timer::getDeltaTime();

@@ -8,8 +8,8 @@
 #pragma comment (lib, "..\\..\\WinProgramming\\x64\\Debug\\MyEngine.lib")
 
 #define PRACTICE__3
-//#define PRACTICE__3_1
-#define PRACTICE__3_2
+#define PRACTICE__3_1
+//#define PRACTICE__3_2
 //#define PRACTICE__3_3
 
 #ifdef PRACTICE__3
