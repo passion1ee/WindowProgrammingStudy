@@ -15,21 +15,28 @@ bool Car::Update(ys::TrffLightSignal signal, RECT screen)
 	if (ys::InputManager::getKeyDown(VK_ADD)) {	Accel(*this); }
 	if (ys::InputManager::getKeyDown(VK_SUBTRACT)) { Decel(*this); }
 
+	auto width = screen.right - screen.left;
+	auto height = screen.bottom - screen.top;
+	RECT carRect = { position.x, position.y, position.x + size, position.y + size };
+	RECT rect1 = { width / 3 - 100, height / 3 - 100, width * 2 / 3 + 100, height * 2 / 3 + 100 };//Áß¾Ó RECT
+	RECT rect2 = stateRect(screen);//¹þ¾î³­ ÀÌÈÄ RECT
+	RECT collideRect;
+
 	switch (signal)
 	{
 	case ys::TrffLightSignal::RED:
-		Stop();
+		if(!IntersectRect(&collideRect, &carRect, &rect1))
+		{
+			MoveAccel(*this);
+			Move(*this, screen);
+		}
+		else
+			StopAccel(*this);
 		break;
 	case ys::TrffLightSignal::GREENtoYELLOW:
 	{
-		auto width = screen.right - screen.left;
-		auto height = screen.bottom - screen.top;
-		RECT carRect = { position.x, position.y, position.x + size, position.y + size };
-		RECT rect = { width / 3, height / 3, width * 2 / 3, height * 2 / 3 };
-		RECT collideRect;
-		if (!IntersectRect(&collideRect, &carRect, &rect))
+		if (!IntersectRect(&collideRect, &carRect, &rect1))
 		{
-			StopAccel(*this);
 			Move(*this, screen);
 			return true;
 		}
@@ -55,10 +62,18 @@ void Car::Render(HDC hdc, RECT screen)
 {
 	if (myState)
 	{
-		auto brush = CreateSolidBrush(RGB(255, 128, 0));
-		auto oldBrush = (HBRUSH)SelectObject(hdc, brush);
 		auto pen = CreatePen(PS_SOLID, 8, RGB(128, 64, 0));
 		auto oldPen = SelectObject(hdc, pen);
+		/*{
+			HBRUSH myBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+			HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
+			RECT tmp = stateRect(screen);
+			Rectangle(hdc, tmp.left, tmp.top, tmp.right, tmp.bottom);
+			SelectObject(hdc, oldBrush);
+			DeleteObject(myBrush);
+		}*/
+		auto brush = CreateSolidBrush(RGB(255, 128, 0));
+		auto oldBrush = (HBRUSH)SelectObject(hdc, brush);
 		myState->Render(hdc, *this, screen);
 		SelectObject(hdc, oldBrush);
 		SelectObject(hdc, oldPen);
@@ -75,4 +90,18 @@ void Car::Stop()
 bool Car::sameRect(const RECT& one, const RECT& other)
 {
 	return one.left == other.left && one.top == other.top && one.right == other.right && one.bottom == other.bottom;
+}
+
+RECT Car::stateRect(RECT screen)
+{
+	auto width = screen.right - screen.left;
+	auto height = screen.bottom - screen.top;
+	if (std::dynamic_pointer_cast<HorizontalMove>(myState))
+		return RECT(width * 2 / 3, height / 2, width, height * 2 / 3);
+	if (std::dynamic_pointer_cast<HorizontalReverseMove>(myState))
+		return RECT(0, height / 3, width / 3, height / 2);
+	if (std::dynamic_pointer_cast<VerticalMove>(myState))
+		return RECT(width / 3, height * 2 / 3, width / 2, height);
+	if (std::dynamic_pointer_cast<VerticalReverseMove>(myState))
+		return RECT(width / 2, 0, width * 2 / 3, height / 3);
 }

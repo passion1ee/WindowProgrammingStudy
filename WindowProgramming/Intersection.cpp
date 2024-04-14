@@ -1,7 +1,7 @@
 #include "Intersection.h"
 #include <cmath>
 
-constexpr float setTrafficTime = 3.0f;
+constexpr float setTrafficTime = 8.0f;
 
 namespace ys
 {
@@ -51,7 +51,7 @@ namespace ys
 		{
 			std::shared_ptr<CarState> state = std::make_shared<HorizontalMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ 0, (height * 7 / 12) - (car->getSize() / 2) }, ys::fVector{ ( i + 1) * 100.0f, 0 });
+			car->Init(state, ys::fVector{ 0, (height * 7 / 12) - (car->getSize() / 2) }, ys::fVector{ ( i + 1) * 300.0f, 0 });
 			horizontalTL.Attach(car);
 			cars.push_back(car);
 		}
@@ -59,7 +59,7 @@ namespace ys
 		{
 			std::shared_ptr<CarState> state = std::make_shared<HorizontalReverseMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ 0, (height * 5 / 12) - (car->getSize() / 2) }, ys::fVector{ ( i + 1 ) * -100.0f, 0 });
+			car->Init(state, ys::fVector{ 0, (height * 5 / 12) - (car->getSize() / 2) }, ys::fVector{ ( i + 1 ) * -300.0f, 0 });
 			horizontalTL.Attach(car);
 			cars.push_back(car);
 		}
@@ -67,7 +67,7 @@ namespace ys
 		{
 			std::shared_ptr<CarState> state = std::make_shared<VerticalMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ (width * 5 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, ( i + 1 ) * 100.0f });
+			car->Init(state, ys::fVector{ (width * 5 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, ( i + 1 ) * 300.0f });
 			verticalTL.Attach(car);
 			cars.push_back(car);
 		}
@@ -75,7 +75,7 @@ namespace ys
 		{
 			std::shared_ptr<CarState> state = std::make_shared<VerticalReverseMove>();
 			std::shared_ptr<Car> car = std::make_shared<Car>();
-			car->Init(state, ys::fVector{ (width * 7 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, ( i + 1 ) * -100.0f });
+			car->Init(state, ys::fVector{ (width * 7 / 12) - (car->getSize() / 2), 0 }, ys::fVector{ 0, ( i + 1 ) * -300.0f });
 			verticalTL.Attach(car);
 			cars.push_back(car);
 		}
@@ -121,9 +121,7 @@ namespace ys
 		horizontalTL.Render(hBackDC);
 		verticalTL.Render(hBackDC);
 		Timer::Render(hBackDC, POINT(screen.right - screen.left, screen.bottom - screen.top));
-		std::wstring line;
-		line += std::to_wstring(trafficTime);
-		TextOut(hBackDC, 100, 400, line.c_str(), line.size());
+		
 		BitBlt(hDC, 0, 0, screen.right - screen.left, screen.bottom - screen.top, hBackDC, 0, 0, SRCCOPY);
 	}
 
@@ -177,6 +175,10 @@ namespace ys
 			else
 				isCenterEmpty = false;
 		}
+		else
+		{
+			horizontalTL.SetState(horizontalTL.GetState(), screen);
+		}
 
 		if (verticalTL.GetState() == TrffLightSignal::GREENtoYELLOW)
 		{
@@ -186,13 +188,10 @@ namespace ys
 			else
 				isCenterEmpty = false;
 		}
-
-
-		if (horizontalTL.GetState() == TrffLightSignal::GREEN)
-			horizontalTL.SetState(horizontalTL.GetState(), screen);
-
-		if (verticalTL.GetState() == TrffLightSignal::GREEN)
+		else
+		{
 			verticalTL.SetState(verticalTL.GetState(), screen);
+		}
 
 	}
 
