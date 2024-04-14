@@ -5,6 +5,6 @@ namespace ys
 	{
 	public:
 		virtual ~Observer() {}
-		virtual void Update(int signal) = 0;
+		virtual void Update(BYTE signal) = 0;
 	};
 }
