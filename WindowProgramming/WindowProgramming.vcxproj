@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickManager.cpp" />
     <ClCompile Include="BrickOut.cpp" />
@@ -153,7 +154,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main2.cpp" />
     <ClCompile Include="Person.cpp" />
+    <ClCompile Include="Piece.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RandomShape.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="selectShape.cpp" />
     <ClCompile Include="SnakeGame.cpp" />
     <ClCompile Include="TextEditor.cpp" />
@@ -163,9 +167,11 @@
     <ClCompile Include="ysRigidbodyGame.cpp" />
     <ClCompile Include="ysShapeLand.cpp" />
     <ClCompile Include="ysWordPuzzle.cpp" />
+    <ClCompile Include="YutNoRi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickManager.h" />
     <ClInclude Include="BrickOut.h" />
@@ -173,9 +179,13 @@
     <ClInclude Include="CarState.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Person.h" />
+    <ClInclude Include="Piece.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RandomShape.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="SnakeGame.h" />
+    <ClInclude Include="Stone.h" />
     <ClInclude Include="TextEditor.h" />
     <ClInclude Include="TrafficLight.h" />
     <ClInclude Include="ysDigitAlphaPlus.h" />
@@ -186,6 +196,7 @@
     <ClInclude Include="ysShapeLand.h" />
     <ClInclude Include="ysSubject.h" />
     <ClInclude Include="ysWordPuzzle.h" />
+    <ClInclude Include="YutNoRi.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

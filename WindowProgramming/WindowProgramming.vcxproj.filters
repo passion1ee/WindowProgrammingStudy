@@ -37,6 +37,12 @@
     <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_3">
       <UniqueIdentifier>{88257218-7e92-4516-894c-4810fc9c3dff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\PRACTICE_3\PRACTICE_3_4">
+      <UniqueIdentifier>{1e26fcb4-afef-446c-be00-c8b85acc4203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_4">
+      <UniqueIdentifier>{4cc2ad91-3868-4988-85bc-84d43c8ac8f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -98,6 +104,21 @@
     </ClCompile>
     <ClCompile Include="Person.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_3</Filter>
+    </ClCompile>
+    <ClCompile Include="Piece.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClCompile>
+    <ClCompile Include="Board.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClCompile>
+    <ClCompile Include="YutNoRi.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +184,24 @@
     </ClInclude>
     <ClInclude Include="TrafficLight.h">
       <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_3</Filter>
+    </ClInclude>
+    <ClInclude Include="Stone.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClInclude>
+    <ClInclude Include="Piece.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClInclude>
+    <ClInclude Include="YutNoRi.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClInclude>
+    <ClInclude Include="Board.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
