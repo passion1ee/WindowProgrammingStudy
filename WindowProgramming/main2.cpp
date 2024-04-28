@@ -301,7 +301,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	g_hInst = hInstance;
 
 	WNDCLASSEX WndClass;
-	WndClass.cbSize = sizeof(WndClass);
+	WndClass.cbSize = sizeof(WndClass); 
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	WndClass.lpfnWndProc = (WNDPROC)WinProc;
 	WndClass.cbClsExtra = 0;

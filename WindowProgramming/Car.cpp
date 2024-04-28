@@ -64,14 +64,6 @@ void Car::Render(HDC hdc, RECT screen)
 	{
 		auto pen = CreatePen(PS_SOLID, 8, RGB(128, 64, 0));
 		auto oldPen = SelectObject(hdc, pen);
-		/*{
-			HBRUSH myBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
-			HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
-			RECT tmp = stateRect(screen);
-			Rectangle(hdc, tmp.left, tmp.top, tmp.right, tmp.bottom);
-			SelectObject(hdc, oldBrush);
-			DeleteObject(myBrush);
-		}*/
 		auto brush = CreateSolidBrush(RGB(255, 128, 0));
 		auto oldBrush = (HBRUSH)SelectObject(hdc, brush);
 		myState->Render(hdc, *this, screen);

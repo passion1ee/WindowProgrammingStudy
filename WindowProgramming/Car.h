@@ -39,6 +39,7 @@ private:
 
 	bool sameRect(const RECT& one, const RECT& other);
 	RECT stateRect(RECT screen);
+
 private:
 	std::shared_ptr <CarState> myState;
 	BYTE size;
