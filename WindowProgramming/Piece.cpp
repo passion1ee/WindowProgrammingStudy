@@ -87,8 +87,11 @@ std::vector<int> PieceOf5::newID(const int& yutRoll) {
 
 		auto specialID = id;//대각선으로 갈 숫자
 		specialID = kMiddleStartNum;//이동(점프)
+		int yutCount = static_cast<int>(yutRoll) - 1;
 
 		id += yutRoll;
+		specialID += yutCount;
+
 		if (specialID == 22)
 			specialID = 27;
 

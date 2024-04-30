@@ -195,8 +195,9 @@ namespace ys
 			if (InputManager::getKeyDown((UINT)Key::S))
 			{
 				isSet = true;
-				while (!rollHistory.empty()) rollHistory.pop();
+				isTwoTurn = false;
 
+				while (!rollHistory.empty()) rollHistory.pop();
 				board.clear();
 				mousePosition = { -1, -1 };
 
@@ -226,8 +227,9 @@ namespace ys
 		std::vector<int>& ablePos, int& prevStoneId, int& prevQuan)
 	{
 		if (!isRoll)
-		{
-			castAndnSaveYut(turnPlayer);
+		{ 
+			if (!castAndnSaveYut(turnPlayer))
+				return;
 			if (!rollHistory.empty())
 			{
 				if (rollHistory.back() != YutSticks::kYut && rollHistory.back() != YutSticks::kMo)
@@ -383,11 +385,18 @@ namespace ys
 		queue<YutSticks> tmp = rollHistory;
 
 		Player* turnPlayer = isTwoTurn ? &players.second : &players.first;
-		auto pen = CreatePen(PS_SOLID, 2, getColor(turnPlayer->getColor()));
-		auto oldPen = SelectObject(hBackDc, pen);
-		Rectangle(hBackDc, 680, 0, 890, 640);
-		SelectObject(hBackDc, oldPen);
-		DeleteObject(pen);
+
+		if(!isRoll)
+		{
+			auto pen = CreatePen(PS_SOLID, 2, getColor(turnPlayer->getColor()));
+			auto oldPen = SelectObject(hBackDc, pen);
+			Rectangle(hBackDc, 680, 0, 890, 640);
+			SelectObject(hBackDc, oldPen);
+			DeleteObject(pen);
+		}
+		else
+			Rectangle(hBackDc, 680, 0, 890, 640);
+
 		
 		if (rollHistory.empty() && ablePop) return;
 		renderYutSet(curYut, POINT(680, 20));
@@ -427,7 +436,7 @@ namespace ys
 			return players.first;
 	}
 
-	void Yutnori::castAndnSaveYut(Player& turnPlayer)
+	bool Yutnori::castAndnSaveYut(Player& turnPlayer)
 	{
 		YutSticks curYut;
 		if (InputManager::getKeyDown((UINT)Key::Num1) && isTwoTurn == false)
@@ -435,13 +444,16 @@ namespace ys
 			curYut = turnPlayer.castYut();
 			Beep(2000, 100);
 			rollHistory.push(curYut);
+			return true;
 		}
 		if (InputManager::getKeyDown((UINT)Key::Num2) && isTwoTurn == true)
 		{
 			curYut = turnPlayer.castYut();
 			Beep(2000, 100);
 			rollHistory.push(curYut);
+			return true;
 		}
+		return false;
 	}
 
 

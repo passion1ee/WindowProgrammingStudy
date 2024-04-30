@@ -71,13 +71,11 @@ void Player::render(HDC hdc)
 	for (auto& stone : stones)
 	{
 		const int& id = stone.getCurId();
-		if (std::find(sameCheck.begin(), sameCheck.end(), id) != sameCheck.end()) continue;
 
-		sameCheck.push_back(id);
 		if (id == -1) stone.setPos({ 900, y });
 		if (id == 0) stone.setPos({ 510, 510 });
 		if (id == 5) stone.setPos({ 510, 0 });
-		if (id == 10) stone.setPos({ 0, 5100 });
+		if (id == 10) stone.setPos({ 0, 0 });
 		if (id == 15) stone.setPos({ 0, 510 });
 		if (id == 22 || id == 27) stone.setPos({ 255, 255 });
 
@@ -91,6 +89,8 @@ void Player::render(HDC hdc)
 		if (id == 20 || id == 21) stone.setPos({ 510 - ((id - 20) * 50 + 75), (id - 20) * 80 + 115 });
 		if (id == 23 || id == 24) stone.setPos({ 510 - ((id - 23) * 50 + 330), (id - 23) * 80 + 370 });
 
+		if (std::find(sameCheck.begin(), sameCheck.end(), id) != sameCheck.end()) continue;
+		sameCheck.push_back(id);
 		stone.render(hdc, isSameId(id).size());
 	}
 }

@@ -26,7 +26,7 @@ namespace ys
 		Player& switchPlayer();
 
 		COLORREF getColor(const Color& color);
-		void castAndnSaveYut(Player&);
+		bool castAndnSaveYut(Player&);
 		void victorySound();
 
 		void renderYutQueue();
