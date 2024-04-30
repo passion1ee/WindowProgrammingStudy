@@ -155,6 +155,7 @@
     <ClCompile Include="main2.cpp" />
     <ClCompile Include="Person.cpp" />
     <ClCompile Include="Piece.cpp" />
+    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RandomShape.cpp" />
     <ClCompile Include="selectShape.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Person.h" />
     <ClInclude Include="Piece.h" />
+    <ClInclude Include="Planet.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RandomShape.h" />
     <ClInclude Include="selectShape.h" />

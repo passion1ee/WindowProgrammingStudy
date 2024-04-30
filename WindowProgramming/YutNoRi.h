@@ -35,6 +35,7 @@ namespace ys
 
 	private:
 		std::queue<YutSticks> rollHistory;
+		YutSticks curYut;
 		int yutCount{};
 		std::pair<Player, Player> players;
 		Board board;
@@ -56,7 +57,6 @@ namespace ys
 		Color setColor = Color::dump;
 
 	private:
-		YutSticks curYut;
 		bool isSet{ true };// V			Run();
 		bool isGoal{ false };// V		LateUpdate();
 		bool isGoalIn{ false };// V		LateUpdate();

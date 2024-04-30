@@ -522,9 +522,9 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__3_5
 #include <windowsx.h>
-#include "YutNoRi.h"
+#include "Planet.h"
 
-ys::Yutnori game;
+ys::Planet game;
 RECT windowRect{ 0, 0, 16 * 80, 9 * 80 };
 
 HINSTANCE g_hInst;
@@ -594,10 +594,16 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		lpMMI->ptMinTrackSize.x = windowRect.right - windowRect.left;
 		lpMMI->ptMinTrackSize.y = windowRect.bottom - windowRect.top;
 		break;
-	}case WM_LBUTTONDOWN:
+	}
+	case WM_LBUTTONDOWN:
 	{
 		game.click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		ys::InputManager::setKeyState(VK_LBUTTON, FALSE, FALSE);
+		break;
+	}
+	case WM_MOUSEMOVE:
+	{
+		game.click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		break;
 	}
 	case WM_LBUTTONUP:

@@ -43,6 +43,12 @@
     <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_4">
       <UniqueIdentifier>{4cc2ad91-3868-4988-85bc-84d43c8ac8f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\PRACTICE_3\PRACTICE_3_5">
+      <UniqueIdentifier>{4c426891-8878-46c7-911d-2ee937017c08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_5">
+      <UniqueIdentifier>{6eed88c1-a832-4ffd-9a8e-04704df55278}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -119,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="Stone.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="Board.h">
       <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_5</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
