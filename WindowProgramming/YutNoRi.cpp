@@ -4,82 +4,8 @@
 #include <sstream>
 using namespace std;
 
-constexpr short kYutSize = 269;
 namespace ys
 {
-	/*Yutnori::Yutnori(Renderer& renderer_) : renderer(renderer_) {
-		std::vector<Symbol> symbols;
-		for (int i = 0; i < static_cast<int>(Symbol::quantity); ++i)
-			symbols.push_back(static_cast<Symbol>(i));
-
-		std::vector<Color> colors;
-		for (int i = 0; i < static_cast<int>(Color::quantity); ++i)
-			colors.push_back(static_cast<Color>(i));
-
-		Symbol setSymbol;
-		Color setColor;
-
-		for (int playerNumber = 0; playerNumber < 2; ++playerNumber) {
-			std::cout << "\x1b[H";
-			while (true) {
-				std::string tmpSymbol;
-				std::cout << "\x1b[2J" << "\x1b[" << std::to_string(symbols.size() + 2) << "A";
-				std::cout << isTwoTurn << "번 유저의 Symbol을 선택하세요." << std::endl;
-				for (int i = 0; i < symbols.size(); ++i)
-					std::cout << i << ". " << renderer.symbolToString(symbols[i]) << "\n";
-				std::cin >> tmpSymbol;
-
-				bool isVal{ true };
-				for (auto arr : tmpSymbol) {
-					if (!isdigit(arr)) {
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-						isVal = false;
-					}
-				}
-				if (!isVal)
-					continue;
-				auto NumSymbol = stoi(tmpSymbol);
-				if (!(0 > NumSymbol || NumSymbol > symbols.size())) {
-					setSymbol = symbols[NumSymbol];
-					symbols.erase(symbols.begin() + NumSymbol);
-					break;
-				}
-			}
-
-			std::cout << "\x1b[H";
-			while (true) {
-				std::string tmpColor;
-				std::cout << "\x1b[2J" << "\x1b[" << std::to_string(colors.size() + 2) << "A";
-				std::cout << isTwoTurn << "번 유저의 Color를 선택하세요." << std::endl;
-				for (int i = 0; i < colors.size(); ++i)
-					std::cout << i << ". " << renderer.setColor(colors[i], "■■■") << "\n";
-				std::cin >> tmpColor;
-
-				bool isVal{ true };
-				for (auto arr : tmpColor) {
-					if (!isdigit(arr)) {
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-						isVal = false;
-					}
-				}
-				if (!isVal)
-					continue;
-				auto NumColor = stoi(tmpColor);
-				if (!(0 > NumColor || NumColor > colors.size())) {
-					setColor = colors[NumColor];
-					colors.erase(colors.begin() + NumColor);
-					break;
-				}
-			}
-
-			if (isTwoTurn)
-				players.second = Player(setSymbol, setColor);
-			else
-				players.first = Player(setSymbol, setColor);
-			isTwoTurn = isTwoTurn ? false : true;
-		}
-	}*/
-
 	void Yutnori::Init(HWND hWnd_, RECT screenSize)
 	{
 		hWnd = hWnd_;
@@ -99,7 +25,18 @@ namespace ys
 	{
 		static int select{};
 
+		auto brush = CreateSolidBrush(RGB(88, 64, 48));
+		auto oldBrush = SelectObject(hBackDc, brush);
+		Rectangle(hBackDc, 0, 0, width, height);
+		SelectObject(hBackDc, oldBrush);
+		DeleteObject(brush);
+
+		brush = CreateSolidBrush(RGB(244, 225, 154));
+		oldBrush = SelectObject(hBackDc, brush);
 		Rectangle(hBackDc, width / 10, height / 10, width * 9 / 10, height * 9 / 10);
+		SelectObject(hBackDc, oldBrush);
+		DeleteObject(brush);
+
 		float menuX{ width * 8 / 10 };
 		float menuY{ height * 8 / 10 };
 
@@ -107,8 +44,8 @@ namespace ys
 		SIZE size;  GetTextExtentPoint32(hBackDc, line.c_str(), line.size(), &size);
 		TextOut(hBackDc, width / 2 - size.cx / 2, height / 10, line.c_str(), line.size());
 
-		auto brush = CreateSolidBrush(getColor(setColor));
-		auto oldBrush = SelectObject(hBackDc, brush);
+		brush = CreateSolidBrush(getColor(setColor));
+		oldBrush = SelectObject(hBackDc, brush);
 		if(setSymbol != Symbol::circle)
 			Ellipse(hBackDc, width / 10 + menuX / 5, height / 10 + menuY / 3, width / 10 + menuX * 2 / 5, height / 10 + menuY * 2 / 3);
 		Vector2 center{ (width / 5 + menuX * 3 / 5) / 2, (height / 5 + menuY) / 2 };
@@ -341,9 +278,20 @@ namespace ys
 	void Yutnori::Render()
 	{
 		PatBlt(hBackDc, 0, 0, screen.right - screen.left, screen.bottom - screen.top, WHITENESS);
+
+		auto brush = CreateSolidBrush(RGB(206, 162, 75));
+		auto oldBrush = SelectObject(hBackDc, brush);
+		Rectangle(hBackDc, 0, 0, width, height);
+		SelectObject(hBackDc, oldBrush);
+		DeleteObject(brush);
+
 		if (isGoal)
 		{
+			brush = CreateSolidBrush(RGB(244, 225, 154));
+			oldBrush = SelectObject(hBackDc, brush);
 			Rectangle(hBackDc, width / 10, height / 10, width * 9 / 10, height * 9 / 10);
+			SelectObject(hBackDc, oldBrush);
+			DeleteObject(brush);
 
 			std::wstring line = to_wstring(isTwoTurn ? 1 : 0) + L"번 유저의 승리!";
 			SIZE size;  GetTextExtentPoint32(hBackDc, line.c_str(), line.size(), &size);
@@ -351,6 +299,12 @@ namespace ys
 		}
 		else
 		{
+			brush = CreateSolidBrush(RGB(88, 64, 48));
+			oldBrush = SelectObject(hBackDc, brush);
+			Rectangle(hBackDc, 0, 0, 640, 640);
+			SelectObject(hBackDc, oldBrush);
+			DeleteObject(brush);
+
 			board.render(hBackDc);
 
 			renderYutQueue();
@@ -385,10 +339,11 @@ namespace ys
 		queue<YutSticks> tmp = rollHistory;
 
 		Player* turnPlayer = isTwoTurn ? &players.second : &players.first;
-
+		auto brush = CreateSolidBrush(RGB(243, 221, 135));
+		auto oldBrush = SelectObject(hBackDc, brush);
 		if(!isRoll)
 		{
-			auto pen = CreatePen(PS_SOLID, 2, getColor(turnPlayer->getColor()));
+			auto pen = CreatePen(PS_SOLID, 10, getColor(turnPlayer->getColor()));
 			auto oldPen = SelectObject(hBackDc, pen);
 			Rectangle(hBackDc, 680, 0, 890, 640);
 			SelectObject(hBackDc, oldPen);
@@ -396,6 +351,8 @@ namespace ys
 		}
 		else
 			Rectangle(hBackDc, 680, 0, 890, 640);
+		SelectObject(hBackDc, oldBrush);
+		DeleteObject(brush);
 
 		
 		if (rollHistory.empty() && ablePop) return;
@@ -564,10 +521,20 @@ namespace ys
 
 	void Yutnori::renderYut(const POINT& position, bool isFront)
 	{
+		HBRUSH brush;
+		HGDIOBJ oldBrush;
+		auto pen = CreatePen(PS_SOLID, 3, RGB(0,0,0));
+		auto oldPen = SelectObject(hBackDc, pen);
 		if(isFront)
+		{
+			brush = CreateSolidBrush(RGB(226, 204, 181));
+			oldBrush = SelectObject(hBackDc, brush);
 			Rectangle(hBackDc, position.x + 10, position.y, position.x + 50, position.y + 130);
+		}
 		else
 		{
+			brush = CreateSolidBrush(RGB(178, 135, 93));
+			oldBrush = SelectObject(hBackDc, brush);
 			Rectangle(hBackDc, position.x + 10, position.y, position.x + 50, position.y + 130);
 			for (int i = 0; i < 4; ++i)
 			{
@@ -577,6 +544,10 @@ namespace ys
 				LineTo(hBackDc, position.x + 20, position.y + 30 * i + 30);
 			}
 		}
+		SelectObject(hBackDc, oldPen);
+		DeleteObject(pen);
+		SelectObject(hBackDc, oldBrush);
+		DeleteObject(brush);
 	}
 
 	void Yutnori::victorySound()

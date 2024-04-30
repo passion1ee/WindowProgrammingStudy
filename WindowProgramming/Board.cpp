@@ -37,30 +37,39 @@ std::vector<int> Board::availablePosition(const int& stoneIndex, const int& yutR
 
 void Board::render(HDC hdc)
 {
-	Rectangle(hdc, 0, 0, 130, 130);
-	Rectangle(hdc, 510, 0, 640, 130);
-	Rectangle(hdc, 0, 510, 130, 640);
-	Rectangle(hdc, 510, 510, 640, 640);
+	auto brush = CreateSolidBrush(RGB(245, 236, 205));
+	auto oldBrush = SelectObject(hdc, brush);
+	Rectangle(hdc, 0, 0, 640, 640);
+	SelectObject(hdc, oldBrush);
+	DeleteObject(brush);
+
+	brush = CreateSolidBrush(RGB(232, 218, 184));
+	oldBrush = SelectObject(hdc, brush);
+	Ellipse(hdc, 0, 0, 130, 130);
+	Ellipse(hdc, 510, 0, 640, 130);
+	Ellipse(hdc, 0, 510, 130, 640);
+	Ellipse(hdc, 510, 510, 640, 640);
 	for(int i = 0; i < 4; ++i)
 	{
-		Rectangle(hdc, i * 90 + 150, 30, i * 90 + 220, 100);
-		Rectangle(hdc, 30, i * 90 + 150, 100, i * 90 + 220);
-		Rectangle(hdc, i * 90 + 150, 540, i * 90 + 220, 610);
-		Rectangle(hdc, 540, i * 90 + 150, 610, i * 90 + 220);
+		Ellipse(hdc, i * 90 + 150, 30, i * 90 + 220, 100);
+		Ellipse(hdc, 30, i * 90 + 150, 100, i * 90 + 220);
+		Ellipse(hdc, i * 90 + 150, 540, i * 90 + 220, 610);
+		Ellipse(hdc, 540, i * 90 + 150, 610, i * 90 + 220);
 	}
 
-	Rectangle(hdc, 320 - 65, 320 - 65, 385, 385);
+	Ellipse(hdc, 320 - 65, 320 - 65, 385, 385);
 	for(int i = 0; i < 2; ++i)
 	{
-		Rectangle(hdc, i * 50 + 135, i * 80 + 115, i * 50 + 205, i * 80 + 185);
-		Rectangle(hdc, i * 50 + 390, i * 80 + 370, i * 50 + 460, i * 80 + 440);
+		Ellipse(hdc, i * 50 + 135, i * 80 + 115, i * 50 + 205, i * 80 + 185);
+		Ellipse(hdc, i * 50 + 390, i * 80 + 370, i * 50 + 460, i * 80 + 440);
 	}
 	for(int i = 0; i < 2; ++i)
 	{
-		Rectangle(hdc, 510 - (i * 50 + 75), i * 80 + 115, 580 - (i * 50 + 75), i * 80 + 185);
-		Rectangle(hdc, 510 - (i * 50 + 330), i * 80 + 370, 580 - (i * 50 + 330), i * 80 + 440);
+		Ellipse(hdc, 510 - (i * 50 + 75), i * 80 + 115, 580 - (i * 50 + 75), i * 80 + 185);
+		Ellipse(hdc, 510 - (i * 50 + 330), i * 80 + 370, 580 - (i * 50 + 330), i * 80 + 440);
 	}
-
+	SelectObject(hdc, oldBrush);
+	DeleteObject(brush);
 }
 
 Piece* Board::operator[](const int _Pos) {

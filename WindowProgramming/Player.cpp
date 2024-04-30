@@ -73,11 +73,11 @@ void Player::render(HDC hdc)
 		const int& id = stone.getCurId();
 
 		if (id == -1) stone.setPos({ 900, y });
-		if (id == 0) stone.setPos({ 510, 510 });
-		if (id == 5) stone.setPos({ 510, 0 });
-		if (id == 10) stone.setPos({ 0, 0 });
-		if (id == 15) stone.setPos({ 0, 510 });
-		if (id == 22 || id == 27) stone.setPos({ 255, 255 });
+		if (id == 0) stone.setPos({ 540, 540 });
+		if (id == 5) stone.setPos({ 540, 30 });
+		if (id == 10) stone.setPos({ 30, 30 });
+		if (id == 15) stone.setPos({ 30, 540 });
+		if (id == 22 || id == 27) stone.setPos({ 285, 285 });
 
 		if (id >= 1 && id <= 4) stone.setPos({ 540, (4 - id) * 90 + 150 });
 		if (id >= 6 && id <= 9) stone.setPos({ (9 - id) * 90 + 150, 30 });
@@ -106,27 +106,6 @@ int Player::selectStone(const POINT& mouse) const {
 			return stone.getCurId();
 	}
 	return -2;
-	//std::vector<std::string> unduplicate;
-	//for (const auto& stone : stones) {
-	//	const auto stonePos = stone.getCurId();
-	//	if (std::find(unduplicate.begin(), unduplicate.end(), std::to_string(stonePos)) == unduplicate.end())
-	//		unduplicate.push_back(std::to_string(stonePos));
-	//	else
-	//		unduplicate.push_back("업혀있음");
-	//}
-
-	//std::cout << "선택 가능한 위치: \n";
-	//for (const auto& pos : unduplicate)
-	//	std::cout << pos << '\t';
-	//std::cout << std::endl;
-
-	//while (true) {
-	//	std::string pos{};
-	//	std::cout << "움직일 돌의 위치를 선택하세요:";
-	//	std::cin >> pos;
-	//	if (pos != "업혀있음" && std::find(unduplicate.begin(), unduplicate.end(), pos) != unduplicate.end())
-	//		return stoi(pos);
-	//}
 }
 
 //std::vector<int> Player::GetAllStonePos() const {
