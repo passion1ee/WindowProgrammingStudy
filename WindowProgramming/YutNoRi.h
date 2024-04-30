@@ -13,26 +13,29 @@ namespace ys
 		void Init(HWND hWnd_, RECT screenSize);
 		void Set();
 		void Run();	
-		void Update();
+		void Update(Player& turnPlayer, Player& opponentPlayer,
+			std::vector<int>& ablePos, int& prevStoneId, int& prevQuan);
+		void LateUpdate(Player& turnPlayer, Player& opponentPlayer,
+			std::vector<int>& ablePos, int& prevStoneId, int& prevQuan);
 		void Render();
 
 		void click(const int&, const int&);
 	private:
 		void setScreen(RECT screen);
 
-		bool getWhoTurn() const;
 		Player& switchPlayer();
-		bool advanceTurn();
 
 		COLORREF getColor(const Color& color);
-	private:
-		std::pair<Quantity, Quantity> SumQuantity(const std::pair<Quantity, Quantity>&, const std::pair<Quantity, Quantity>&);
-		std::string castAndnSaveYut(Player&);
+		void castAndnSaveYut(Player&);
+		void victorySound();
+
+		void renderYutQueue();
+		void renderYutSet(const YutSticks& yut, const POINT& position);
+		void renderYut(const POINT& position, bool isFront);
 
 	private:
 		std::queue<YutSticks> rollHistory;
-		bool isTwoTurn{ false };
-		bool isSet{ true };
+		int yutCount{};
 		std::pair<Player, Player> players;
 		Board board;
 
@@ -51,6 +54,17 @@ namespace ys
 		std::vector<Color> colors;
 		Symbol setSymbol = Symbol::dump;
 		Color setColor = Color::dump;
+
+	private:
+		YutSticks curYut;
+		bool isSet{ true };// V			Run();
+		bool isGoal{ false };// V		LateUpdate();
+		bool isGoalIn{ false };// V		LateUpdate();
+		bool isTwoTurn{ false };// V	switchPlayer();
+		bool isRoll{ false };// V		switchPlayer();
+		bool ablePop{ true };//V		Update(), LateUpdate();
+		bool ableSelect{ true };//V		Update(), LateUpdate();
+		bool isMove{ false };// V		Update()
 	};
 }
 

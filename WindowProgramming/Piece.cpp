@@ -2,9 +2,9 @@
 #include "Player.h"
 
 Piece::Piece(const int& id)
-	: pieceId(id), state({ Quantity::kEmpty ,Quantity::kEmpty }), curSymbol(Symbol::dump), curColor(Color::dump) {}
+	: pieceId(id), state(0), curSymbol(Symbol::dump), curColor(Color::dump) {}
 
-std::pair<Quantity, Quantity> Piece::getQuantity() const {
+int Piece::getQuantity() const {
 	return state;
 }
 
@@ -23,13 +23,15 @@ int Piece::GetId() const {
 	return pieceId;
 }
 
-void Piece::setState(const std::pair<Quantity, Quantity>& setQuan, const Symbol& setShape, const Color& setColor) {
+void Piece::setState(const int& setQuan, const Symbol& setShape, const Color& setColor) {
 	state = setQuan;
 	curSymbol = setShape;
 	curColor = setColor;
 }
 
-//void Piece::setQuantity(const std::pair<Quantity, Quantity>& setVal) {
+//void Piece::set
+// 
+// (const std::pair<Quantity, Quantity>& setVal) {
 //	state = setVal;
 //}
 
@@ -44,17 +46,18 @@ void Piece::setColor(const Color& setVal) {
 
 PieceNomal::PieceNomal(const int& id) : Piece(id) {}
 
-std::vector<int> PieceNomal::newID(const YutSticks& yutRoll) {
+std::vector<int> PieceNomal::newID(const int& yutRoll) {
 	auto id = GetId();
 
-	if (yutRoll == YutSticks::kBackDo) {
+	if (yutRoll == -1) {
 		if (id == 1)
 			return std::vector<int>(1, -1);
 		else
 			return std::vector<int>(1, id + static_cast<int>(yutRoll));
 	}
 
-	for (int yutCount = static_cast<int>(yutRoll); yutCount != 0; --yutCount) {
+	for(int i = 0; i < yutRoll; ++i)
+	{
 		if (id == 24)
 			id = 15;
 		else if (id == 19)
@@ -64,6 +67,7 @@ std::vector<int> PieceNomal::newID(const YutSticks& yutRoll) {
 		else
 			++id;
 	}
+
 	return std::vector<int>(1, id);
 }
 
@@ -71,22 +75,22 @@ std::vector<int> PieceNomal::newID(const YutSticks& yutRoll) {
 
 PieceOf5::PieceOf5(const int& id) : Piece(id) {}
 
-std::vector<int> PieceOf5::newID(const YutSticks& yutRoll) {
+std::vector<int> PieceOf5::newID(const int& yutRoll) {
 	constexpr int kStartNum = 5;
 	constexpr int kMiddleStartNum = 20;
 	constexpr int kMiddleEndNum = 24;
 	constexpr int kEndNum = 15;
 	auto id = GetId();//직진
 	if (id == kStartNum) {
-		if (yutRoll == YutSticks::kBackDo)
+		if (yutRoll == -1)
 			return std::vector<int>(1, id + static_cast<int>(yutRoll));
 
 		auto specialID = id;//대각선으로 갈 숫자
 		specialID = kMiddleStartNum;//이동(점프)
-		int yutCount = static_cast<int>(yutRoll) - 1;//대각선 진입했기 때문에 1 감소
 
-		id += static_cast<int>(yutRoll);
-		specialID += yutCount;
+		id += yutRoll;
+		if (specialID == 22)
+			specialID = 27;
 
 		std::vector<int> result;
 		result.push_back(id);
@@ -95,7 +99,7 @@ std::vector<int> PieceOf5::newID(const YutSticks& yutRoll) {
 		return result;
 	}
 	else {//id == kMiddleStartNum
-		if (yutRoll == YutSticks::kBackDo)
+		if (yutRoll == -1)
 			return std::vector<int>(1, kStartNum);
 
 		for (int yutCount = static_cast<int>(yutRoll); yutCount != 0; --yutCount) {
@@ -108,18 +112,19 @@ std::vector<int> PieceOf5::newID(const YutSticks& yutRoll) {
 	}
 }
 
+
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 PieceOf10::PieceOf10(const int& id) : Piece(id) {}
 
-std::vector<int> PieceOf10::newID(const YutSticks& yutRoll) {
+std::vector<int> PieceOf10::newID(const int& yutRoll) {
 	constexpr int kStartNum = 10;
 	constexpr int kMiddleStartNum = 25;
 	constexpr int kMiddleEndNum = 29;
 	constexpr int kEndNum = 0;
 	auto id = GetId();//직진
 	if (id == kStartNum) {
-		if (yutRoll == YutSticks::kBackDo)
+		if (yutRoll == -1)
 			return std::vector<int>(1, id + static_cast<int>(yutRoll));
 
 		auto specialID = id;//대각선으로 갈 숫자
@@ -136,7 +141,7 @@ std::vector<int> PieceOf10::newID(const YutSticks& yutRoll) {
 		return result;
 	}
 	else {//id == kMiddleStartNum
-		if (yutRoll == YutSticks::kBackDo)
+		if (yutRoll == -1)
 			return std::vector<int>(1, kStartNum);
 
 		for (int yutCount = static_cast<int>(yutRoll); yutCount != 0; --yutCount) {
@@ -149,17 +154,14 @@ std::vector<int> PieceOf10::newID(const YutSticks& yutRoll) {
 	}
 }
 
+
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 PieceOf22::PieceOf22(const int& id) : Piece(id) {}
 
-std::vector<int> PieceOf22::newID(const YutSticks& yutRoll) {
+std::vector<int> PieceOf22::newID(const int& yutRoll) {
 	auto id = GetId();
-	if (yutRoll == YutSticks::kBackDo)
-		return std::vector<int>(1, id + static_cast<int>(yutRoll));
-
-
-	if (yutRoll == YutSticks::kBackDo)
+	if (yutRoll == -1)
 		return std::vector<int>(1, id + static_cast<int>(yutRoll));
 
 	std::vector<int> result;

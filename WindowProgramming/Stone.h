@@ -1,6 +1,8 @@
 #ifndef STONE
 #define STONE
 
+#include <Windows.h>
+
 enum class Symbol {
 	Hash, circle, quantity, dump
 	//	31m	34m 32m 33m
@@ -13,16 +15,21 @@ enum class Color {
 class Stone {
 public:
 	Stone() = default;
-	Stone(const Symbol& symbol, const Color& color) : position(-1), shape(symbol), team(color) {}
+	Stone(const Symbol& symbol, const Color& color) : curPieceId(-1), shape(symbol), team(color) {}
+
+	void render(HDC hdc, const int& quantt);
 
 public:
-	int getPos() const { return position; }
-	void setPos(const int& setVal) { position = setVal; }
+	bool collide(const POINT& point) const;
+	int getCurId() const { return curPieceId; }
+	void setId(const int& setVal) { curPieceId = setVal; }
+	void setPos(const POINT& setVal) { position = setVal; }
 	Symbol getSymbol() const { return shape; }
 	Color getColor() const { return team; }
 
 private:
-	int position;
+	POINT position{};
+	int curPieceId;
 	Symbol shape;
 	Color team;
 };

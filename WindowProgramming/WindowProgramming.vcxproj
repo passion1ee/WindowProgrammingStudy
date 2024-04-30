@@ -157,9 +157,9 @@
     <ClCompile Include="Piece.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RandomShape.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="selectShape.cpp" />
     <ClCompile Include="SnakeGame.cpp" />
+    <ClCompile Include="Stone.cpp" />
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
     <ClCompile Include="ysDigitAlphaPlus.cpp" />
@@ -182,7 +182,6 @@
     <ClInclude Include="Piece.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RandomShape.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="SnakeGame.h" />
     <ClInclude Include="Stone.h" />

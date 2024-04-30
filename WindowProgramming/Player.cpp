@@ -7,46 +7,57 @@ std::random_device rd;
 std::mt19937 dre(rd());
 std::uniform_int_distribution<> chance(1, 10000);
 
-Player::Player(const Symbol& symbol, const Color& color) {
+Player::Player(const Symbol& symbol, const Color& color, const int& y) {
 	stones.assign(4, Stone(symbol, color));
+	this->y = y;
+
+	int i{};
+	for (auto iter = stones.begin(); iter != stones.end(); ++iter)
+		if (-1 == iter->getCurId())
+		{
+			iter->setPos(POINT(900 + i * 30, y));
+			i++;
+		}
 }
 
-std::vector<int> Player::isSamePos(const int& comp) {
+std::vector<int> Player::isSameId(const int& comp) {
 	std::vector<int> compResult;
 	if (comp == 22) {
 		for (auto iter = stones.begin(); iter != stones.end(); ++iter)
-			if (comp == iter->getPos() || 27 == iter->getPos())
-				compResult.push_back(iter->getPos());
+			if (comp == iter->getCurId() || 27 == iter->getCurId())
+				compResult.push_back(iter->getCurId());
 	}
 	else if (comp == 27) {
 		for (auto iter = stones.begin(); iter != stones.end(); ++iter)
-			if (comp == iter->getPos() || 22 == iter->getPos())
-				compResult.push_back(iter->getPos());
+			if (comp == iter->getCurId() || 22 == iter->getCurId())
+				compResult.push_back(iter->getCurId());
 	}
 	else {
 		for (auto iter = stones.begin(); iter != stones.end(); ++iter)
-			if (comp == iter->getPos())
-				compResult.push_back(iter->getPos());
+			if (comp == iter->getCurId())
+				compResult.push_back(iter->getCurId());
 	}
 
 	return compResult;
 }
 
-bool Player::setStonePos(const int& stonePos, const int& id) {
+bool Player::setStoneCurId(const int& stoneId, const int& id) {
 	auto prevSize = stones.size();
-	auto stone = std::find_if(stones.begin(), stones.end(), [stonePos](const Stone& comp) { return comp.getPos() == stonePos; });
-	while (stone != stones.end()) {
+	auto stone = std::find_if(stones.begin(), stones.end(), [stoneId](const Stone& comp) { return comp.getCurId() == stoneId; });
+	while (stone != stones.end()) {//같은 Id에 있는 돌 모두 옮기기
 		if (id == 0)
 			stones.erase(stone);
-		else if (stonePos == -1) {
-			stone->setPos(id);
+		else if (stoneId == -1) {
+			stone->setId(id);
 			break;
 		}
 		else
-			stone->setPos(id);
+			stone->setId(id);
 
-		stone = std::find_if(stones.begin(), stones.end(), [stonePos](const Stone& comp) { return comp.getPos() == stonePos; });
+		stone = std::find_if(stones.begin(), stones.end(), [stoneId](const Stone& comp) { return comp.getCurId() == stoneId; });
 	}
+	int i{};
+
 	auto curSize = stones.size();
 	if (prevSize > curSize)
 		return true;
@@ -54,32 +65,68 @@ bool Player::setStonePos(const int& stonePos, const int& id) {
 		return false;
 }
 
-const size_t& Player::stoneQuantity() {
+void Player::render(HDC hdc)
+{
+	std::vector<int> sameCheck;
+	for (auto& stone : stones)
+	{
+		const int& id = stone.getCurId();
+		if (std::find(sameCheck.begin(), sameCheck.end(), id) != sameCheck.end()) continue;
+
+		sameCheck.push_back(id);
+		if (id == -1) stone.setPos({ 900, y });
+		if (id == 0) stone.setPos({ 510, 510 });
+		if (id == 5) stone.setPos({ 510, 0 });
+		if (id == 10) stone.setPos({ 0, 5100 });
+		if (id == 15) stone.setPos({ 0, 510 });
+		if (id == 22 || id == 27) stone.setPos({ 255, 255 });
+
+		if (id >= 1 && id <= 4) stone.setPos({ 540, (4 - id) * 90 + 150 });
+		if (id >= 6 && id <= 9) stone.setPos({ (9 - id) * 90 + 150, 30 });
+		if (id >= 11 && id <= 14) stone.setPos({ 30, (id - 11) * 90 + 150});
+		if (id >= 16 && id <= 19) stone.setPos({ (id - 16) * 90 + 150, 540 });
+
+		if (id == 25 || id == 26) stone.setPos({ (id - 25) * 50 + 135, (id - 25) * 80 + 115 });
+		if (id == 28 || id == 29) stone.setPos({ (id - 28) * 50 + 390, (id - 28) * 80 + 370 });
+		if (id == 20 || id == 21) stone.setPos({ 510 - ((id - 20) * 50 + 75), (id - 20) * 80 + 115 });
+		if (id == 23 || id == 24) stone.setPos({ 510 - ((id - 23) * 50 + 330), (id - 23) * 80 + 370 });
+
+		stone.render(hdc, isSameId(id).size());
+	}
+}
+
+const size_t& Player::curStoneCount() {
 	return stones.size();
 }
 
-int Player::selectStone() const {
-	std::vector<std::string> unduplicate;
-	for (const auto& stone : stones) {
-		const auto stonePos = stone.getPos();
-		if (std::find(unduplicate.begin(), unduplicate.end(), std::to_string(stonePos)) == unduplicate.end())
-			unduplicate.push_back(std::to_string(stonePos));
-		else
-			unduplicate.push_back("업혀있음");
+int Player::selectStone(const POINT& mouse) const {
+	for (auto& stone : stones)
+	{
+		if (stone.collide(mouse))
+			return stone.getCurId();
 	}
+	return -2;
+	//std::vector<std::string> unduplicate;
+	//for (const auto& stone : stones) {
+	//	const auto stonePos = stone.getCurId();
+	//	if (std::find(unduplicate.begin(), unduplicate.end(), std::to_string(stonePos)) == unduplicate.end())
+	//		unduplicate.push_back(std::to_string(stonePos));
+	//	else
+	//		unduplicate.push_back("업혀있음");
+	//}
 
-	std::cout << "선택 가능한 위치: \n";
-	for (const auto& pos : unduplicate)
-		std::cout << pos << '\t';
-	std::cout << std::endl;
+	//std::cout << "선택 가능한 위치: \n";
+	//for (const auto& pos : unduplicate)
+	//	std::cout << pos << '\t';
+	//std::cout << std::endl;
 
-	while (true) {
-		std::string pos{};
-		std::cout << "움직일 돌의 위치를 선택하세요:";
-		std::cin >> pos;
-		if (pos != "업혀있음" && std::find(unduplicate.begin(), unduplicate.end(), pos) != unduplicate.end())
-			return stoi(pos);
-	}
+	//while (true) {
+	//	std::string pos{};
+	//	std::cout << "움직일 돌의 위치를 선택하세요:";
+	//	std::cin >> pos;
+	//	if (pos != "업혀있음" && std::find(unduplicate.begin(), unduplicate.end(), pos) != unduplicate.end())
+	//		return stoi(pos);
+	//}
 }
 
 //std::vector<int> Player::GetAllStonePos() const {

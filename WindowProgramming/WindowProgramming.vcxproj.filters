@@ -111,14 +111,14 @@
     <ClCompile Include="Player.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
-    </ClCompile>
     <ClCompile Include="Board.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClCompile>
     <ClCompile Include="YutNoRi.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
+    </ClCompile>
+    <ClCompile Include="Stone.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -195,9 +195,6 @@
       <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClInclude>
     <ClInclude Include="YutNoRi.h">
-      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
       <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClInclude>
     <ClInclude Include="Board.h">

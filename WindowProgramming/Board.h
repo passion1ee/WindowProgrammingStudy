@@ -19,8 +19,10 @@ private:
 public:
 	Board();
 	std::vector<Piece*> getBoard() const;
-	std::vector<int> availablePosition(const int& stoneIndex, const YutSticks& yutRoll);
+	std::vector<int> availablePosition(const int& stoneIndex, const int& yutRoll);
+	void render(HDC hdc);
 	Piece* operator[](const int _Pos);
+	void clear();
 };
 
 #endif // BOARD

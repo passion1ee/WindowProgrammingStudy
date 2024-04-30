@@ -13,15 +13,18 @@ enum class YutSticks {
 class Player {
 private:
 	std::vector<Stone> stones;
-public:
-	Player() = default;
-	Player(const Symbol&, const Color&);
-	bool setStonePos(const int&, const int&);//삭제가 되었다면(0에 도달했다면) true반환
+	int y;
 
 public:
-	const size_t& stoneQuantity();
-	std::vector<int> isSamePos(const int& comp);
-	int selectStone() const;
+	Player() = default;
+	Player(const Symbol&, const Color&, const int& y);
+	bool setStoneCurId(const int&, const int&);//삭제가 되었다면(0에 도달했다면) true반환
+	void render(HDC hdc);
+
+public:
+	const size_t& curStoneCount();
+	std::vector<int> isSameId(const int& comp);
+	int selectStone(const POINT& mouse) const;
 	//std::vector<int> GetAllStonePos() const;
 	YutSticks castYut();
 	Symbol getSymbol() const;
