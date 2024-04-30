@@ -118,7 +118,7 @@
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClCompile>
     <ClCompile Include="Stone.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
