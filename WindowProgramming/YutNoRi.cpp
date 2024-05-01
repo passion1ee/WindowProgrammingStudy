@@ -368,7 +368,7 @@ namespace ys
 			SIZE size;  GetTextExtentPoint32(hBackDc, line.c_str(), line.size(), &size);
 			TextOut(hBackDc, 680 + (105 - size.cx / 2), 600, line.c_str(), line.size());
 		}
-		BitBlt(hDc, 650, 0, 900, screen.bottom - screen.top, hBackDc, 0, 0, SRCCOPY);
+		BitBlt(hDc, 650, 0, 210, screen.bottom - screen.top, hBackDc, 650, 0, SRCCOPY);
 		//680 890
 		//10~5까지 출력
 		/*	Rectangle(hBackDc, 0, 0, 130, 130);//10
@@ -509,9 +509,18 @@ namespace ys
 			setPosition.x += 50;
 			renderYut(setPosition, false);
 			setPosition.x += 50;
+
+			auto pen = CreatePen(PS_SOLID, 3, RGB(0, 0, 0));
+			auto oldPen = SelectObject(hBackDc, pen);
+			auto brush = CreateSolidBrush(RGB(226, 204, 181));
+			auto oldBrush = SelectObject(hBackDc, brush);
 			Rectangle(hBackDc, setPosition.x + 10, position.y, setPosition.x + 50, position.y + 130);
 			MoveToEx(hBackDc, setPosition.x + 15, position.y + 125, NULL);
 			LineTo(hBackDc, setPosition.x + 45, position.y + 5);
+			SelectObject(hBackDc, oldPen);
+			DeleteObject(pen);
+			SelectObject(hBackDc, oldBrush);
+			DeleteObject(brush);
 			return;
 		}
 		default:

@@ -24,14 +24,14 @@ namespace ys
 		void setScreen(RECT screen);
 
 		Player& switchPlayer();
-
 		COLORREF getColor(const Color& color);
 		bool castAndnSaveYut(Player&);
-		void victorySound();
 
 		void renderYutQueue();
 		void renderYutSet(const YutSticks& yut, const POINT& position);
 		void renderYut(const POINT& position, bool isFront);
+
+		void victorySound();
 
 	private:
 		std::queue<YutSticks> rollHistory;

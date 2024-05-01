@@ -49,6 +49,12 @@
     <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_5">
       <UniqueIdentifier>{6eed88c1-a832-4ffd-9a8e-04704df55278}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\PRACTICE_3\PRACTICE_3_1">
+      <UniqueIdentifier>{034ec3ee-2913-46e6-8023-e714f11e9e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\PRACTICE_3\PRACTICE_3_1">
+      <UniqueIdentifier>{6b9fbba2-c6ea-49c4-a019-39491aee29f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -80,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="ysWordPuzzle.cpp">
       <Filter>소스 파일\PRACTICE_2</Filter>
-    </ClCompile>
-    <ClCompile Include="SnakeGame.cpp">
-      <Filter>소스 파일\PRACTICE_3</Filter>
     </ClCompile>
     <ClCompile Include="BrickOut.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_2</Filter>
@@ -129,6 +132,9 @@
     <ClCompile Include="Planet.cpp">
       <Filter>소스 파일\PRACTICE_3\PRACTICE_3_5</Filter>
     </ClCompile>
+    <ClCompile Include="SnakeGame.cpp">
+      <Filter>소스 파일\PRACTICE_3\PRACTICE_3_1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RandomShape.h">
@@ -154,9 +160,6 @@
     </ClInclude>
     <ClInclude Include="ysWordPuzzle.h">
       <Filter>헤더 파일\PRACTICE_2</Filter>
-    </ClInclude>
-    <ClInclude Include="SnakeGame.h">
-      <Filter>헤더 파일\PRACTICE_3</Filter>
     </ClInclude>
     <ClInclude Include="Ball.h">
       <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_2</Filter>
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="Planet.h">
       <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_5</Filter>
+    </ClInclude>
+    <ClInclude Include="SnakeGame.h">
+      <Filter>헤더 파일\PRACTICE_3\PRACTICE_3_1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
