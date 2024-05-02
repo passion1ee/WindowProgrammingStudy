@@ -14,6 +14,8 @@ namespace ys
 		void Render();
 
 		void setScreen(RECT screenSize);
+		void command(const WORD& command);
+
 	private:
 		HWND hWnd;
 		HDC hDC;
@@ -24,9 +26,11 @@ namespace ys
 		RECT screen;
 
 		float isCoolTime;
+		float secondBall;
 		float frameCheck;
 		bool isRun;
 
+		std::vector<std::pair<Ball, float>> copyPlayers;
 		Ball player;
 		BrickManager Bricks;
 	};

@@ -184,6 +184,7 @@
     <ClInclude Include="Planet.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RandomShape.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="selectShape.h" />
     <ClInclude Include="SnakeGame.h" />
     <ClInclude Include="Stone.h" />
@@ -198,6 +199,9 @@
     <ClInclude Include="ysSubject.h" />
     <ClInclude Include="ysWordPuzzle.h" />
     <ClInclude Include="YutNoRi.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

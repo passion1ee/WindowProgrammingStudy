@@ -8,7 +8,7 @@ public:
 
 	void Init(ys::fVector position_);
 	void Update(RECT& clientRect);
-	void Render(HDC hdc);
+	void Render(HDC hdc, const bool& isCopy = true);
 	//bool CheckCollision(Brick& brick);
 
 	void setDirection(ys::fVector val)
@@ -26,6 +26,12 @@ public:
 		position.y = yVal;
 	}
 
+	void setSpeed(const float& num)
+	{
+		velocity = num;
+	}
+
+	void setSize(const int& size_) { size = size_; }
 	const int& getSize() const { return size; }
 	ys::fVector& getDirection() { return Direction; }
 	const ys::fVector& getPosition() const { return position; }

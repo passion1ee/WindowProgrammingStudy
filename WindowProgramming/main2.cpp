@@ -9,10 +9,10 @@
 
 #define PRACTICE__3
 //#define PRACTICE__3_1
-//#define PRACTICE__3_2
+#define PRACTICE__3_2
 //#define PRACTICE__3_3
 //#define PRACTICE__3_4
-#define PRACTICE__3_5
+//#define PRACTICE__3_5
 
 #ifdef PRACTICE__3
 #ifdef PRACTICE__3_1
@@ -149,6 +149,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 #ifdef PRACTICE__3_2
 #include <windowsx.h>
 #include "BrickOut.h"
+#include "resource.h"
 
 ys::BrickOut game;
 RECT windowRect{ 0, 0, 16 * 80, 9 * 80 };
@@ -187,7 +188,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
-
+	SetMenu(hWnd, LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU1)));
 	game.Init(hWnd, windowRect);
 	ys::InputManager::Init();
 
@@ -219,6 +220,11 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 		MINMAXINFO* lpMMI = (MINMAXINFO*)lParam;
 		lpMMI->ptMinTrackSize.x = windowRect.right - windowRect.left;
 		lpMMI->ptMinTrackSize.y = windowRect.bottom - windowRect.top;
+		break;
+	}
+	case WM_COMMAND:
+	{
+		game.command(LOWORD(wParam));
 		break;
 	}
 	case WM_LBUTTONDOWN:

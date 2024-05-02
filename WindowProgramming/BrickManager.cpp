@@ -1,24 +1,28 @@
 #include "BrickManager.h"
 
-void BrickManager::Init(const int& quantity, const RECT& screenSize)
+void BrickManager::Init(const int& quantity, const RECT& screenSize, bool reset, const BYTE& lineQuan_)
 {
-	const auto& xSize = (screenSize.right - screenSize.left) / ((quantity / 3) + 10);
-	const auto& ySize = (screenSize.bottom - screenSize.top) / ((quantity / 3) + 10);
+	if(reset)
+	{
+		lineQuan = 3;
+		color = 0;
+		bricks.clear();
+		bricks.reserve(quantity);
+	}
+	else
+		lineQuan = lineQuan_;
 
-	bricks.clear();
-	bricks.reserve(quantity);
+	auto lineBrickQuan = quantity / lineQuan;
 	for (auto i = 0; i < quantity; ++i)
 	{
-		long x = 5 * xSize + ((i % (quantity / 3)) * xSize);
-		long y;
-		if (i < quantity / 3)
-			y = screenSize.bottom - 8 * ySize;
-		else if(i < quantity * 2 / 3)
-			y = screenSize.bottom - 7 * ySize;
-		else
-			y = screenSize.bottom - 6 * ySize;
+		auto curLineOffsetY = lineQuan - (i / lineBrickQuan);
+		long x = (screenSize.right - (lineBrickQuan * 60)) / 2 + (i % lineBrickQuan) * 60;
+		long y = screenSize.bottom - (8 - curLineOffsetY) * 30;
 
-		bricks.push_back(Brick(RECT(x, y, x + xSize, y + ySize), 2, true));
+		if (reset)
+			bricks.push_back(Brick(RECT(x, y, x + 60, y + 30), 2, true));
+		else
+			bricks[i].setPosition(RECT(x, y, x + 60, y + 30));
 	}
 }
 
@@ -36,22 +40,27 @@ void BrickManager::Render(HDC hdc)
 	for (auto& brick : bricks)
 	{
 		if (!brick.isActive()) continue;
-		brick.Render(hdc);
+		brick.Render(hdc, color);
 	}
 }
 
-bool BrickManager::CheckCollision(Ball& ball)
+std::pair<bool, bool> BrickManager::CheckCollision(Ball& ball)
 {
 	bool isCollide{ false };
+	bool isItem{ false };
 	for (auto& brick : bricks)
 	{
 		if (!brick.isActive()) continue;
 		if (isCollide) continue;
 
-		if (brick.CheckCollision(ball))
+		auto bools = brick.CheckCollision(ball);
+
+		if (bools.first)
 			isCollide = true;
+		if (bools.second)
+			isItem = true;
 	}
-	return isCollide;
+	return std::make_pair(isCollide, isItem);
 }
 
 const std::pair<int, int>& BrickManager::CountInAct() const

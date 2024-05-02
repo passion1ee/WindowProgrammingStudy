@@ -8,8 +8,8 @@ void Ball::Init(ys::fVector position_)
 {
 	position = { position_.x, position_.y };
 	Direction = { 1, 1 };
-	velocity = 1.0f;
-	size = 30;
+	velocity = 1.0f;//속도 빠르게 / 중간 / 느리게        4 / 2.5 / 1
+	size = 20;// 크기 작은거 20 큰거 30
 }
 
 void Ball::Update(RECT& clientRect)
@@ -61,7 +61,7 @@ void Ball::Update(RECT& clientRect)
 	}
 }
 
-void Ball::Render(HDC hdc)
+void Ball::Render(HDC hdc, const bool& isCopy)
 {
 	std::wstring text;
 	text += L"x: " + std::to_wstring(position.x) + L", y: " + std::to_wstring(position.y) +
@@ -70,7 +70,8 @@ void Ball::Render(HDC hdc)
 	std::wstring text2;
 	text2 += L"Direction: " + std::to_wstring(Direction.x) + L", Direction: " + std::to_wstring(Direction.y);
 	TextOut(hdc, 200, 20, text2.c_str(), text2.size());
-	HBRUSH brush = CreateSolidBrush(RGB(255, 255, 0));
+	HBRUSH brush;
+	brush = isCopy ? CreateSolidBrush(RGB(255, 0, 0)) : CreateSolidBrush(RGB(255, 255, 0));
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, brush);
 	Ellipse(hdc, position.x, position.y, position.x + size, position.y + size);
 	SelectObject(hdc, oldBrush);
