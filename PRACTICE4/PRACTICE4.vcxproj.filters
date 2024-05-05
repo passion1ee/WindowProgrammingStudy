@@ -13,5 +13,41 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\PRACTICE_4">
+      <UniqueIdentifier>{e646ebdd-390a-4048-89b9-dcbbd497ddd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_4">
+      <UniqueIdentifier>{0e0694b7-a218-48b3-8af7-6b9624473436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\PRACTICE_4\PRACTICE_4_2">
+      <UniqueIdentifier>{10bade1b-7968-4884-9843-7b2cd8d566c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\PRACTICE_4\PRACTICE_4_2">
+      <UniqueIdentifier>{4bdd989f-07c9-4844-968b-95013b3c8bd0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PaintBoard.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PRACTICE4.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일\PRACTICE_4\PRACTICE_4_2</Filter>
+    </ClInclude>
+    <ClInclude Include="PaintBoard.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdfax.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

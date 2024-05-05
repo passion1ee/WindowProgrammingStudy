@@ -1,5 +1,6 @@
 #include "Planet.h"
 #include <algorithm>
+#include "../../WinProgramming/MyEngine_source/ysMath.h"
 
 std::uniform_int_distribution<> randomRadius(10, 60);
 
