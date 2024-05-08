@@ -1,4 +1,5 @@
 #include "PaintBoard.h"
+#include "stdfax.h"
 #include "resource.h"
 
 namespace ys

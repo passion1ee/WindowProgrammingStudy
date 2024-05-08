@@ -159,10 +159,11 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 #ifdef PRACTICE__4_3
 #include <windowsx.h>
+#include "ColorTetris.h"
 #include "resource.h"
 
-ys::PaintBoard game;
-RECT windowRect{ 0, 0, 9 * 80, 9 * 80 };
+ys::ColorTetris game;
+RECT windowRect{ 0, 0, 9 * 100, 9 * 100 };
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -198,7 +199,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	hWnd = CreateWindow(lpszClass, lpszWindowName, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, hInstance, NULL);
-	SetMenu(hWnd, LoadMenu(g_hInst, MAKEINTRESOURCE(IDR_MENU1)));
+	SetMenu(hWnd, LoadMenu(g_hInst, MAKEINTRESOURCE(IDR_MENU2)));
 
 	game.Init(hWnd, windowRect);
 	ys::InputManager::Init();
@@ -236,34 +237,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 	{
 		game.command(LOWORD(wParam));
-		break;
-	}
-	case WM_LBUTTONDOWN:
-	{
-		game.Lclick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		ys::InputManager::setKeyState(VK_LBUTTON, FALSE, FALSE);
-		break;
-	}
-	case WM_LBUTTONUP:
-	{
-		ys::InputManager::setKeyState(VK_LBUTTON, KF_REPEAT, KF_UP);
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		game.Rclick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		ys::InputManager::setKeyState(VK_RBUTTON, FALSE, FALSE);
-		break;
-	}
-	case WM_RBUTTONUP:
-	{
-		ys::InputManager::setKeyState(VK_RBUTTON, KF_REPEAT, KF_UP);
-		break;
-	}
-	case WM_MOUSEMOVE:
-	{
-		game.Lclick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		game.Rclick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		break;
 	}
 	case WM_KEYDOWN:

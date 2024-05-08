@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ColorTetris.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PaintBoard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ColorTetris.h" />
     <ClInclude Include="PaintBoard.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdfax.h" />
